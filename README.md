@@ -12,7 +12,7 @@ Repositori ini berfungsi sebagai **arsip portofolio** dan **bukti teknis** dari 
 
 1.  **Versi Pengembangan (Development Snapshot):** Kode yang tersimpan di sini adalah versi snapshot saat sidang akhir. Ini adalah **purwarupa fungsional** di mana semua fitur berjalan sepenuhnya, namun **belum** melalui tahap *Refactoring*, penerapan *Clean Code* menyeluruh, dan *Performance Optimization* tingkat lanjut.
 2.  **Hak Kekayaan Intelektual (HKI) & NDA:** Versi final yang siap produksi (*production-ready*) yang telah dioptimasi adalah milik bersama antara pengembang, rekan tim, dan dosen pembimbing, serta diserahkan kepada **Perusahaan Mitra**. Karena adanya **Non-Disclosure Agreement (NDA)** dan perlindungan HKI, versi final tersebut tidak dipublikasikan di sini.
-3.  **Tujuan:** Repositori ini ditujukan semata-mata untuk **demonstrasi kemampuan teknis (Hard Skill)**, logika pemrograman, integrasi sistem (Mobile-Web-Backend), dan implementasi AI yang telah dibangun selama masa pengembangan.
+3.  **Tujuan:** Repositori ini ditujukan semata-mata untuk **demonstrasi kemampuan teknis**, logika pemrograman, integrasi sistem (Mobile-Web-Backend), dan implementasi AI yang telah dibangun selama masa pengembangan.
 
 ---
 
