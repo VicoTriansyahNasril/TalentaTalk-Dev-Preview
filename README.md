@@ -33,9 +33,9 @@ Proyek ini menggunakan struktur **Monorepo** yang mencakup tiga komponen utama:
 
 | Folder | Komponen | Deskripsi Teknologi |
 | :--- | :--- | :--- |
-| `front-end-talent-english` | **Aplikasi Mobile** | Dibangun dengan **Flutter (Dart)**. [cite_start]Menggunakan arsitektur BLoC untuk manajemen state dan menangani perekaman audio real-time. [cite: 1] |
-| `Front-End-English-Manajemen` | **Web Dashboard** | Dibangun dengan **React.js 19 (Vite)** & Material UI. [cite_start]Berfungsi untuk manajemen pengguna, konten, dan bulk import data via Excel. [cite: 3498] |
-| `Backend_TalentaTalk` | **Backend API** | Dibangun dengan **FastAPI (Python)**. [cite_start]Berfungsi sebagai otak pemrosesan AI (ASR, LLM Wrapper) dan manajemen database. [cite: 5644] |
+| `front-end-talent-english` | **Aplikasi Mobile** | Dibangun dengan **Flutter (Dart)**. [cite_start]Menggunakan arsitektur BLoC untuk manajemen state dan menangani perekaman audio real-time.|
+| `Front-End-English-Manajemen` | **Web Dashboard** | Dibangun dengan **React.js 19 (Vite)** & Material UI. [cite_start]Berfungsi untuk manajemen pengguna, konten, dan bulk import data via Excel.|
+| `Backend_TalentaTalk` | **Backend API** | Dibangun dengan **FastAPI (Python)**. [cite_start]Berfungsi sebagai otak pemrosesan AI (ASR, LLM Wrapper) dan manajemen database.|
 
 ---
 
