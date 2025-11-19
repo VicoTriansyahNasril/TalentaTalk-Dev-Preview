@@ -50,18 +50,3 @@ Proyek ini menggunakan struktur **Monorepo** yang mencakup tiga komponen utama:
     * **Transkripsi:** OpenAI Whisper.
 
 ---
-
-## 👤 Kredit & Pengembang
-
-Proyek ini dikembangkan sebagai bagian dari Tugas Akhir di **Politeknik Negeri Bandung**.
-
-**Pengembang Utama:**
-* **Vico Triansyah Nasril** - Full Stack Developer (Mobile, Web, & Backend)
-
-**Kontributor & Supervisi:**
-* **Rekan Tim:** (Turut berkontribusi dalam pengembangan sistem)
-* **Dosen Pembimbing:** (Memberikan arahan teknis dan akademis)
-* **Perusahaan Mitra:** (Pihak penerima manfaat implementasi sistem)
-
----
-*© 2025 Vico Triansyah Nasril & Tim. Kode ini diunggah untuk keperluan portofolio dan verifikasi akademik.*
