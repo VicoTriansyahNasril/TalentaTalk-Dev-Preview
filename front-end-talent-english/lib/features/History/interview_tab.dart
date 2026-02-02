@@ -7,9 +7,9 @@ class InterviewTab extends StatelessWidget {
   final List<InterviewHistory> history;
 
   const InterviewTab({
-    Key? key,
+    super.key,
     required this.history,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -44,7 +44,6 @@ import '../features/Pronunciation/sentences/material/material_list_screen.dart';
 import '../features/Pronunciation/words/material/material_list_screen.dart';
 import '../features/Profile/profile_screen.dart';
 import '../features/Exam/examphoneme/exam_phoneme.dart';
-import '../features/Exam/exampronunciation/exam_pronunciation_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -208,7 +207,7 @@ final GoRouter appRouter = GoRouter(
           index = 2;
         }
         
-        return NavWrapper(child: child, currentIndex: index);
+        return NavWrapper(currentIndex: index, child: child);
       },
       routes: [
         GoRoute(

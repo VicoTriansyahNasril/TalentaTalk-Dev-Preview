@@ -7,9 +7,9 @@ class ExamTab extends StatelessWidget {
   final List<ExamHistory> history;
 
   const ExamTab({
-    Key? key,
+    super.key,
     required this.history,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +118,7 @@ class ExamTab extends StatelessWidget {
               ),
             ],
           ),
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite,
             child: SingleChildScrollView(
               child: Column(
@@ -355,7 +355,7 @@ class ExamTab extends StatelessWidget {
                                 ],
                               ),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     )

@@ -70,7 +70,7 @@ class PronunciationSentencesBloc extends Bloc<PronunciationEvent, PronunciationS
     emit(state.copyWith(isRecording: false));
     emit(state.copyWith(isSubmitting: true));
     print('🕒 isSubmitting: ${state.isSubmitting}');
-    if (path == null || state.currentSentence == null || state.examId == null) return;
+    if (path == null || state.currentSentence == null) return;
 
     try {
       print('🎙️ Sending recording for evaluation (with examId: ${state.examId})');

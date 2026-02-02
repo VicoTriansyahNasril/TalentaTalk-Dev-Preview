@@ -7,9 +7,9 @@ class ConversationTab extends StatelessWidget {
   final List<ConversationHistory> history;
 
   const ConversationTab({
-    Key? key,
+    super.key,
     required this.history,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

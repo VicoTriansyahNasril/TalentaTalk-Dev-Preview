@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'interview_event.dart';
 import 'interview_state.dart';
 import '../model/chat_message.dart';
-import '../model/interview_summary.dart';
 import '../repository/interview_repository.dart';
 
 class InterviewBloc extends Bloc<InterviewEvent, InterviewState> {

@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -101,7 +100,7 @@ class PronunciationSentencesBloc extends Bloc<PronunciationEvent, PronunciationS
         emit(state.copyWith(
           phonemeResults: phonemeComparison,
           score: similarityPercent / 100,
-          phonemeResult: 'Score: ${similarityPercentStr}',
+          phonemeResult: 'Score: $similarityPercentStr',
         ));
         
         print('📤 Menampilkan hasil /compare dengan idContent: ${state.idContent}');

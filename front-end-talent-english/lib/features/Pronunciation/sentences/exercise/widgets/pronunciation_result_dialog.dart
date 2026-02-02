@@ -27,11 +27,11 @@ class PronunciationResultDialog extends StatelessWidget {
   final String targetPhrase;
 
   const PronunciationResultDialog({
-    Key? key,
+    super.key,
     required this.accuracyPercent,
     required this.phonemeComparison,
     required this.targetPhrase,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

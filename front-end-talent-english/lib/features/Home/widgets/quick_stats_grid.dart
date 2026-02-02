@@ -44,7 +44,7 @@ class QuickStatsGrid extends StatelessWidget {
               child: _StatCard(
                 icon: Icons.trending_up,
                 title: "Avg Phoneme",
-                value: avgPhonemeScore > 0 ? "${avgPhonemeScore.toStringAsFixed(1)}" : "N/A",
+                value: avgPhonemeScore > 0 ? avgPhonemeScore.toStringAsFixed(1) : "N/A",
                 color: Colors.purple,
               ),
             ),

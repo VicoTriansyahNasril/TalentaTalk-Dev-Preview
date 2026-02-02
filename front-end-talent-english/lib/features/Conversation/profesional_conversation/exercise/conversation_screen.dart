@@ -13,7 +13,7 @@ import 'widget/conversation_report.dart';
 import '../../interview/service/transcribe_service.dart';
 
 class ConversationScreen extends StatefulWidget {
-  const ConversationScreen({Key? key}) : super(key: key);
+  const ConversationScreen({super.key});
 
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();

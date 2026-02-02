@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class PersistentBottomBarScaffold extends StatefulWidget {
   final List<PersistentTabItem> items;
 
-  const PersistentBottomBarScaffold({Key? key, required this.items})
-      : super(key: key);
+  const PersistentBottomBarScaffold({super.key, required this.items});
 
   @override
   _PersistentBottomBarScaffoldState createState() => _PersistentBottomBarScaffoldState();

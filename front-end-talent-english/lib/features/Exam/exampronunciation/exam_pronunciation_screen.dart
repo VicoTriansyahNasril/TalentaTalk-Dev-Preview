@@ -6,7 +6,6 @@ import 'bloc/exam_pronunciation_event.dart';
 import 'bloc/exam_pronunciation_state.dart';
 import '../../../../services/tts_service.dart';
 import '../../../../core/constants.dart';
-import 'widgets/result_dialog.dart';
 
 class ExamPronunciationScreen extends StatefulWidget {
   final int examId;
@@ -21,7 +20,7 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => PronunciationSentencesBloc(
-        baseUrl: '${Env.baseUrl}',
+        baseUrl: Env.baseUrl,
         ttsService: TtsService(),
       )..add(FetchExamSentences(widget.examId)),
       child: Scaffold(

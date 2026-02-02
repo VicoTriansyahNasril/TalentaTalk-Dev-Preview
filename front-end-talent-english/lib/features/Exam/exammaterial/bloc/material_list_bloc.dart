@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../model/material_model.dart';
 import '../repository/material_repository.dart';
 import 'material_list_event.dart';
 import 'material_list_state.dart';

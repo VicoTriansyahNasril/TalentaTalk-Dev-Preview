@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../widgets/instruction_screen.dart';
-import 'pretest_pronunciation_screen.dart';
 
 
 class PretestPronunciationInstructionScreen extends StatelessWidget {

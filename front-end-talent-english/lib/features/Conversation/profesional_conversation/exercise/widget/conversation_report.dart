@@ -6,10 +6,10 @@ class ConversationReportWidget extends StatelessWidget {
   final Map<String, dynamic> saveStatus;
 
   const ConversationReportWidget({
-    Key? key,
+    super.key,
     required this.report,
     required this.saveStatus,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

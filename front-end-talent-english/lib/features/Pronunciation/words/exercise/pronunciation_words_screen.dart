@@ -22,7 +22,7 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => PronunciationWordsBloc(
-        baseUrl: '${Env.baseUrl}',
+        baseUrl: Env.baseUrl,
         ttsService: TtsService(),
       )..add(FetchWordById(widget.idMaterial)),
       child: Scaffold(

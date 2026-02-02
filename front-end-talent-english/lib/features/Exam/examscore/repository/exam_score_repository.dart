@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../core/constants.dart';
 import '../model/exam_score_model.dart';
 
 class ExamScoreRepository {

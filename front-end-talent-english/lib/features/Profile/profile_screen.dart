@@ -6,7 +6,6 @@ import 'bloc/profile_state.dart';
 import 'repository/profile_repository.dart';
 import 'widgets/profile_header_widget.dart';
 import 'widgets/progress_stats_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/activity_stats_widget.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

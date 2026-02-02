@@ -7,9 +7,9 @@ class PronunciationTab extends StatelessWidget {
   final List<PronunciationHistory> history;
 
   const PronunciationTab({
-    Key? key,
+    super.key,
     required this.history,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -338,7 +338,7 @@ class PronunciationTab extends StatelessWidget {
                               ),
                             ],
                           ),
-                        )).toList(),
+                        )),
                       ],
                     ),
                   )

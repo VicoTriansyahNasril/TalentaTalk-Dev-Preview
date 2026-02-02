@@ -10,6 +10,8 @@ import 'interview_tab.dart';
 import 'exam_tab.dart';
 
 class TrainingHistoryScreen extends StatefulWidget {
+  const TrainingHistoryScreen({super.key});
+
   @override
   _TrainingHistoryScreenState createState() => _TrainingHistoryScreenState();
 }

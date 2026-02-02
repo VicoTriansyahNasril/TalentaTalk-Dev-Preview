@@ -1,9 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:go_router/go_router.dart';
 import 'home_event.dart';
 import 'home_state.dart';
-import '../models/user_activity.dart';
 import '../repository/home_repository.dart';
 import '../service/home_service.dart';
 

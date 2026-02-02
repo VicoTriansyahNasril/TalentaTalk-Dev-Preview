@@ -20,7 +20,7 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => PracticePronunciationBloc(
-        baseUrl: '${Env.baseUrl}',
+        baseUrl: Env.baseUrl,
         ttsService: TtsService(),
       )..add(FetchPracticeSentences()),
       child: Scaffold(

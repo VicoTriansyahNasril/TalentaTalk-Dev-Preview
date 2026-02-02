@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../widgets/highlighted_text.dart';
 class ScoreResult {
   final String userPhoneme;

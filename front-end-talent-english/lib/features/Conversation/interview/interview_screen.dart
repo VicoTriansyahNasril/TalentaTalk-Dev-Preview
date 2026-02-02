@@ -20,7 +20,7 @@ import 'widgets/animated_card.dart';
 import 'widgets/back_button_card.dart';
 
 class InterviewScreen extends StatefulWidget {
-  const InterviewScreen({Key? key}) : super(key: key);
+  const InterviewScreen({super.key});
 
   @override
   State<InterviewScreen> createState() => _InterviewScreenState();
