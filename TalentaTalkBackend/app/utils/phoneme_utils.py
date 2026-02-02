@@ -1,23 +1,28 @@
 from difflib import SequenceMatcher
-from typing import List, Dict, Tuple, Set
+from typing import List, Dict, Tuple
 from app.core.config import settings
 
 class PhonemeMatcher:
     SIMILAR_PHONEMES = settings.SIMILAR_PHONEMES
     ALL_PHONEMES = settings.VOWEL_PHONEMES + settings.DIPHTHONG_PHONEMES + settings.CONSONANT_PHONEMES
     
-    TIE_BAR_NORMALIZATION = {
-        "d͡ʒ": "dʒ", "t͡ʃ": "tʃ", "t͡s": "ts", "d͡z": "dz"
-    }
+    @classmethod
+    def normalize_phonemes(cls, phoneme_str: str) -> List[str]:
+        if not phoneme_str:
+            return []
+            
+        normalized_str = phoneme_str
+        for key, value in settings.TIE_BAR_NORMALIZATION.items():
+            normalized_str = normalized_str.replace(key, value)
+            
+        return normalized_str.split()
 
     @classmethod
     def get_similar_phonemes(cls, phoneme: str) -> List[str]:
-        """Logic pengambilan fonem mirip yang sama persis dengan controller lama"""
         if phoneme not in cls.ALL_PHONEMES:
             return []
 
         direct_similars = set(cls.SIMILAR_PHONEMES.get(phoneme, []))
-        
         inverse_similars = set()
         for key, values in cls.SIMILAR_PHONEMES.items():
             if phoneme in values:
@@ -26,7 +31,6 @@ class PhonemeMatcher:
 
         all_similars = direct_similars.union(inverse_similars)
         all_similars.discard(phoneme)
-        
         return sorted(list(all_similars))
 
     @classmethod
@@ -49,8 +53,8 @@ class PhonemeMatcher:
 
     @classmethod
     def align_phonemes(cls, target_str: str, user_str: str) -> List[Dict]:
-        target_list = target_str.split()
-        user_list = user_str.split()
+        target_list = cls.normalize_phonemes(target_str)
+        user_list = cls.normalize_phonemes(user_str)
         
         matcher = SequenceMatcher(None, target_list, user_list)
         alignment = []
@@ -61,9 +65,7 @@ class PhonemeMatcher:
                     t = target_list[i1+k]
                     u = user_list[j1+k]
                     status, score = cls.get_status_score(t, u)
-                    alignment.append({
-                        "target": t, "user": u, "status": status, "similarity": score
-                    })
+                    alignment.append({"target": t, "user": u, "status": status, "similarity": score})
             elif tag == 'replace':
                 len_target = i2 - i1
                 len_user = j2 - j1
@@ -89,15 +91,11 @@ class PhonemeMatcher:
     @staticmethod
     def calculate_accuracy(alignment: List[Dict]) -> float:
         if not alignment: return 0.0
-        
         total_score = 0
         valid_items = 0
-        
         for item in alignment:
-            # Mengikuti logika controller lama:
             status = item.get("status")
             if status == "correct": total_score += 100
             elif status == "similar": total_score += 75
             valid_items += 1
-            
         return round(total_score / valid_items, 1) if valid_items > 0 else 0.0

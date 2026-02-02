@@ -1,5 +1,7 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, validator
 from typing import Optional, List
+
+# --- READ SCHEMAS (OUTPUT) ---
 
 class TalentDTO(BaseModel):
     id: int
@@ -17,7 +19,6 @@ class TalentDTO(BaseModel):
 class TalentDetailDTO(TalentDTO):
     """
     Schema lengkap untuk detail page talent.
-    Berisi informasi tambahan statistik.
     """
     total_phoneme_completed: int
     total_conversation_completed: int
@@ -25,3 +26,26 @@ class TalentDetailDTO(TalentDTO):
     last_activity_date: Optional[str] = None
     average_pronunciation_score: float = 0.0
     average_speaking_wpm: float = 0.0
+
+# --- WRITE SCHEMAS (INPUT) ---
+
+class TalentUpdate(BaseModel):
+    """
+    Schema untuk update data profile talent (Nama, Email, Role).
+    Semua field optional agar bisa update parsial.
+    """
+    nama: Optional[str] = None
+    email: Optional[EmailStr] = None
+    role: Optional[str] = None
+
+    @validator('nama')
+    def validate_nama(cls, v):
+        if v is not None and not v.strip():
+            raise ValueError('Nama tidak boleh kosong')
+        return v.strip() if v else v
+
+class TalentPasswordUpdate(BaseModel):
+    """
+    Schema khusus untuk ganti password talent.
+    """
+    new_password: str = Field(..., min_length=6, description="Password minimal 6 karakter")

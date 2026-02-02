@@ -4,6 +4,7 @@ from app.core.database import get_db
 from app.services.conversation_service import ConversationService
 from app.schemas.conversation import ChatInput, ChatResponse, ConversationStart
 from app.schemas.response import ResponseBase
+from app.api.deps import get_current_user
 
 router = APIRouter()
 
@@ -29,18 +30,16 @@ async def start_conversation(
 @router.post("/chat", response_model=ResponseBase[ChatResponse])
 async def chat(
     input_data: ChatInput,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
 ):
     """
     Memproses chat user.
-    Service akan menghitung WPM, cek grammar via AI, dan menyimpan history ke DB.
     """
     service = ConversationService(db)
     
-    # TODO: Ambil talent_id dari JWT Token (saat ini hardcode 1 untuk MVP)
-    talent_id = 1 
+    talent_id = current_user["idtalent"]
     
-    # Logic utama ada di Service
     result = await service.process_chat(
         user_input=input_data.user_input,
         duration=input_data.duration,

@@ -13,7 +13,7 @@ from app.utils.time_utils import TimeUtils
 from typing import Optional
 from datetime import datetime
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_admin_user)])
 
 @router.get("/dashboard", response_model=ResponseBase[DashboardResponse])
 async def get_dashboard(
@@ -53,10 +53,16 @@ async def get_highest_scoring(
     return ResponseBase(data=data)
 
 @router.get("/profile", response_model=ResponseBase[AdminProfile])
-async def get_profile(current_admin: Manajemen = Depends(get_current_admin_user)):
+async def get_profile(
+    current_admin: Manajemen = Depends(get_current_admin_user)
+):
     return ResponseBase(data=AdminProfile(
-        idUser=f"ADM{current_admin.idmanajemen:03d}", name=current_admin.namamanajemen, email=current_admin.email, role="Manajemen",
-        createdAt="2025-01-01 00:00:00", lastLogin=TimeUtils.format_to_wib(TimeUtils.get_current_time())
+        idUser=f"ADM{current_admin.idmanajemen:03d}", 
+        name=current_admin.namamanajemen, 
+        email=current_admin.email, 
+        role="Manajemen",
+        createdAt="2025-01-01 00:00:00", 
+        lastLogin=TimeUtils.format_to_wib(TimeUtils.get_current_time())
     ))
 
 @router.put("/profile", response_model=ResponseBase)

@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Query, UploadFile, File
+from fastapi import APIRouter, Depends, Query, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.services.talent_service import TalentService
-from app.schemas.talent import TalentUpdate
+from app.schemas.talent import TalentUpdate, TalentPasswordUpdate
 from app.schemas.response import ResponseBase
 from app.utils.template_generator import TemplateGenerator
 from app.api.deps import get_current_admin_user
@@ -12,17 +12,28 @@ router = APIRouter(dependencies=[Depends(get_current_admin_user)])
 
 @router.get("", response_model=ResponseBase)
 async def get_talent_list(
-    searchQuery: str = Query(None), page: int = Query(1, ge=1), limit: int = Query(10, ge=1), db: AsyncSession = Depends(get_db)
+    searchQuery: str = Query(None), 
+    page: int = Query(1, ge=1), 
+    limit: int = Query(10, ge=1), 
+    db: AsyncSession = Depends(get_db)
 ):
     service = TalentService(db)
     result = await service.get_talents_list(page, limit, searchQuery)
-    pagination = {"currentPage": result["page"], "totalRecords": result["total"], "totalPages": (result["total"] + limit - 1) // limit}
+    pagination = {
+        "currentPage": result["page"], 
+        "totalRecords": result["total"], 
+        "totalPages": (result["total"] + limit - 1) // limit
+    }
     return ResponseBase(data={"talents": result["data"], "pagination": pagination}, message="Data talent berhasil diambil")
 
 @router.get("/import-template")
 async def get_talent_template():
     buffer = TemplateGenerator.get_talent_template()
-    return StreamingResponse(buffer, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", headers={"Content-Disposition": "attachment; filename=talent_import_template.xlsx"})
+    return StreamingResponse(
+        buffer, 
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+        headers={"Content-Disposition": "attachment; filename=talent_import_template.xlsx"}
+    )
 
 @router.post("/import", response_model=ResponseBase)
 async def import_talents(file: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
@@ -38,7 +49,11 @@ async def get_talent_detail(talent_id: int, db: AsyncSession = Depends(get_db)):
     return ResponseBase(data=data)
 
 @router.put("/{talent_id}", response_model=ResponseBase)
-async def update_talent(talent_id: int, request: TalentUpdate, db: AsyncSession = Depends(get_db)):
+async def update_talent(
+    talent_id: int, 
+    request: TalentUpdate, 
+    db: AsyncSession = Depends(get_db)
+):
     service = TalentService(db)
     await service.update_talent(talent_id, request)
     return ResponseBase(message="Data talent berhasil diperbarui")
@@ -50,9 +65,13 @@ async def delete_talent(talent_id: int, db: AsyncSession = Depends(get_db)):
     return ResponseBase(message="Talent berhasil dihapus")
 
 @router.put("/{talent_id}/change-password", response_model=ResponseBase)
-async def change_talent_password(talent_id: int, payload: dict, db: AsyncSession = Depends(get_db)):
+async def change_talent_password(
+    talent_id: int, 
+    request: TalentPasswordUpdate, 
+    db: AsyncSession = Depends(get_db)
+):
     service = TalentService(db)
-    await service.change_password(talent_id, payload.get("new_password"))
+    await service.change_password(talent_id, request.new_password)
     return ResponseBase(message="Password berhasil diubah")
 
 @router.get("/{talent_id}/phoneme-material-exercise", response_model=ResponseBase)
