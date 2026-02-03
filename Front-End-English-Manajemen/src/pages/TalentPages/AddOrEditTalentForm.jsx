@@ -1,4 +1,3 @@
-// src/pages/TalentPages/AddOrEditTalentForm.jsx
 import React, { useEffect, useState } from "react";
 import {
   Dialog,
@@ -64,22 +63,24 @@ const AddOrEditTalentForm = ({
     enableReinitialize: true,
   });
 
+  const { setValues, resetForm } = formik;
+
   useEffect(() => {
     if (open) {
       if (isEdit && defaultValues) {
-        formik.setValues({
+        setValues({
           name: defaultValues.talentName || "",
           email: defaultValues.email || "",
           role: defaultValues.role || "",
           password: "",
         });
       } else {
-        formik.resetForm();
+        resetForm();
       }
       setActiveTab(0);
       setPasswordForm({ newPassword: "", confirmPassword: "" });
     }
-  }, [open, isEdit, defaultValues]);
+  }, [open, isEdit, defaultValues, setValues, resetForm]);
 
   const handleClose = () => {
     formik.resetForm();
@@ -103,6 +104,7 @@ const AddOrEditTalentForm = ({
         role: formik.values.role,
       });
     } catch (error) {
+      Swal.fire("Error", error.message || "Failed to update profile", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -122,12 +124,13 @@ const AddOrEditTalentForm = ({
       await onChangePassword({ new_password: passwordForm.newPassword });
       setPasswordForm({ newPassword: "", confirmPassword: "" });
     } catch (error) {
+      Swal.fire("Error", error.message || "Failed to change password", "error");
     } finally {
       setIsSubmitting(false);
     }
   };
-  
-  const isProfileChanged = isEdit && defaultValues ? 
+
+  const isProfileChanged = isEdit && defaultValues ?
     formik.values.name !== defaultValues.talentName ||
     formik.values.email !== defaultValues.email ||
     formik.values.role !== defaultValues.role
@@ -184,8 +187,8 @@ const AddOrEditTalentForm = ({
           )}
           {activeTab === 1 && (
             <Stack spacing={2}>
-              <CustomInput label="Enter New Password" name="newPassword" type={showPassword ? "text" : "password"} value={passwordForm.newPassword} onChange={handlePasswordFormChange} fullWidth required InputProps={{ endAdornment: ( <InputAdornment position="end"> <IconButton onClick={() => setShowPassword(!showPassword)}>{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton> </InputAdornment> ), }} />
-              <CustomInput label="Re-type New Password" name="confirmPassword" type={showConfirmPassword ? "text" : "password"} value={passwordForm.confirmPassword} onChange={handlePasswordFormChange} fullWidth required error={passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword} helperText={passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword ? "Passwords do not match" : ""} InputProps={{ endAdornment: ( <InputAdornment position="end"> <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>{showConfirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton> </InputAdornment> ), }} />
+              <CustomInput label="Enter New Password" name="newPassword" type={showPassword ? "text" : "password"} value={passwordForm.newPassword} onChange={handlePasswordFormChange} fullWidth required InputProps={{ endAdornment: (<InputAdornment position="end"> <IconButton onClick={() => setShowPassword(!showPassword)}>{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton> </InputAdornment>), }} />
+              <CustomInput label="Re-type New Password" name="confirmPassword" type={showConfirmPassword ? "text" : "password"} value={passwordForm.confirmPassword} onChange={handlePasswordFormChange} fullWidth required error={passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword} helperText={passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword ? "Passwords do not match" : ""} InputProps={{ endAdornment: (<InputAdornment position="end"> <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>{showConfirmPassword ? <VisibilityOff /> : <Visibility />}</IconButton> </InputAdornment>), }} />
             </Stack>
           )}
         </Box>

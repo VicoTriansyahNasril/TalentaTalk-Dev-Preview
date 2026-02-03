@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import React, { useState, useEffect } from "react";
 import { Box, Grid, Paper, CircularProgress, Alert } from "@mui/material";
 import { useFormik } from "formik";
@@ -44,14 +43,16 @@ const LoginPage = () => {
       setIsLoading(true);
       try {
         const response = await authService.loginAdmin(values);
-        
+
         if (response && response.success) {
           const userData = {
             name: response.data.name,
             email: response.data.email,
             role: response.data.role,
           };
-          login(response.data.token, userData); 
+
+          login(response.data.access_token, userData);
+
           localStorage.setItem('lastLoginEmail', values.email);
           navigate(from, { replace: true });
         } else {
@@ -101,9 +102,9 @@ const LoginPage = () => {
         component={Paper}
         elevation={6}
         square
-        sx={{ 
-          display: "flex", 
-          alignItems: "center", 
+        sx={{
+          display: "flex",
+          alignItems: "center",
           justifyContent: "center",
         }}
       >
@@ -128,10 +129,10 @@ const LoginPage = () => {
               Sign in to manage the TalentaTalk system
             </CustomTypography>
           </Box>
-          <Box 
-            component="form" 
-            onSubmit={formik.handleSubmit} 
-            noValidate 
+          <Box
+            component="form"
+            onSubmit={formik.handleSubmit}
+            noValidate
             sx={{ mt: 1 }}
           >
             <CustomInput

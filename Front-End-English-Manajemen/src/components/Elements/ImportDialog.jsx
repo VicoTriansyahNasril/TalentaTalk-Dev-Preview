@@ -1,4 +1,3 @@
-// src/components/Elements/ImportDialog.jsx - ENHANCED IMPORT DIALOG COMPONENT
 import React, { useState, useRef } from 'react';
 import {
   Dialog,
@@ -134,7 +133,6 @@ const ImportDialog = ({
       const response = await currentConfig.templateEndpoint();
       
       if (response.data?.downloadUrl) {
-        // If backend provides download URL
         const link = document.createElement('a');
         link.href = response.data.downloadUrl;
         link.download = response.data.fileName || currentConfig.fileName;
@@ -142,7 +140,6 @@ const ImportDialog = ({
         link.click();
         document.body.removeChild(link);
       } else {
-        // Fallback: generate client-side template
         generateFallbackTemplate();
       }
       
@@ -157,11 +154,9 @@ const ImportDialog = ({
   };
 
   const generateFallbackTemplate = () => {
-    // Generate a basic CSV template as fallback
     const headers = currentConfig.requiredColumns;
     let csvContent = headers.join(',') + '\n';
     
-    // Add example row based on material type
     if (materialType === 'phoneme-material') {
       csvContent += 'i,beat,biːt,mengalahkan,to strike repeatedly\n';
       csvContent += 'ɪ,bit,bɪt,sedikit,a small piece or amount\n';
@@ -182,7 +177,6 @@ const ImportDialog = ({
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Validate file type
       const allowedTypes = [
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'application/vnd.ms-excel',
@@ -194,7 +188,6 @@ const ImportDialog = ({
         return;
       }
       
-      // Validate file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
         alert('File size must not exceed 10MB');
         return;

@@ -1,13 +1,10 @@
-// src/pages/TalentPages/TalentInterviewDetail.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { 
-  Box, Grid, Breadcrumbs, Link, Avatar, Paper, CircularProgress, Alert, 
-  Typography, Divider, Chip, Stack, List, ListItem, ListItemIcon, ListItemText 
+import {
+  Box, Grid, Breadcrumbs, Link, Avatar, Paper, CircularProgress, Alert,
+  Typography, Divider, Chip, Stack, List, ListItem, ListItemIcon, ListItemText
 } from "@mui/material";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import { talentService } from "../../services/talentService";
-
-// Import Icons for better UI
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
@@ -15,7 +12,6 @@ import SpeedOutlinedIcon from '@mui/icons-material/SpeedOutlined';
 import SpellcheckOutlinedIcon from '@mui/icons-material/SpellcheckOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-// Helper component for displaying key metrics
 const MetricDisplay = ({ icon, title, value, chipProps }) => (
   <Paper variant="outlined" sx={{ p: 2, textAlign: 'center', height: '100%' }}>
     <Stack direction="row" spacing={1.5} alignItems="center" justifyContent="center" mb={1}>
@@ -84,7 +80,7 @@ const TalentInterviewDetail = () => {
       return new Date(dateString).toLocaleString('id-ID', {
         day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
       });
-    } catch (error) { return dateString; }
+    } catch { return dateString; }
   };
 
   const getWpmChipProps = (wpm) => {
@@ -128,7 +124,7 @@ const TalentInterviewDetail = () => {
         <Link component={RouterLink} to={`/talent/${id}`} underline="hover" color="inherit">{talentInfo?.nama}</Link>
         <Typography color="text.primary">Interview Attempt #{interviewDetail.attemptNumber}</Typography>
       </Breadcrumbs>
-      
+
       <Paper sx={{ p: 3, borderRadius: 3 }}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
@@ -151,8 +147,8 @@ const TalentInterviewDetail = () => {
         <Typography variant="h5" gutterBottom fontWeight={600} color="primary.main">Key Metrics</Typography>
         <Grid container spacing={3} mb={4}>
           <Grid item xs={12} sm={6}>
-            <MetricDisplay 
-              icon={<SpeedOutlinedIcon color="primary"/>}
+            <MetricDisplay
+              icon={<SpeedOutlinedIcon color="primary" />}
               title="Words Per Minute (WPM)"
               value={`${feedback.wpm || 0} WPM`}
               chipProps={getWpmChipProps(feedback.wpm)}
@@ -160,7 +156,7 @@ const TalentInterviewDetail = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <MetricDisplay
-              icon={<SpellcheckOutlinedIcon color="primary"/>}
+              icon={<SpellcheckOutlinedIcon color="primary" />}
               title="Grammar Assessment"
               value={feedback.grammar || "N/A"}
               chipProps={getGrammarChipProps(feedback.grammar)}
@@ -171,21 +167,21 @@ const TalentInterviewDetail = () => {
         <Typography variant="h5" gutterBottom fontWeight={600} color="primary.main">Performance Analysis</Typography>
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <FeedbackSection 
+            <FeedbackSection
               icon={<ThumbUpOutlinedIcon color="success" />}
               title="Strengths"
               content={feedback.strength || "Not evaluated"}
             />
           </Grid>
           <Grid item xs={12}>
-            <FeedbackSection 
+            <FeedbackSection
               icon={<ReportProblemOutlinedIcon color="warning" />}
               title="Areas for Improvement"
               content={feedback.weakness || "Not evaluated"}
             />
           </Grid>
           <Grid item xs={12}>
-            <FeedbackSection 
+            <FeedbackSection
               icon={<BarChartOutlinedIcon color="info" />}
               title="Overall Performance"
               content={cleanPerformanceText(feedback.performance)}

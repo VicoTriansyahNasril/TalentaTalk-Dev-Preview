@@ -1,5 +1,4 @@
-// src/pages/ProfilePage.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -74,12 +73,12 @@ const ProfilePage = () => {
     }
   };
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const response = await authService.getAdminProfile();
-      
+
       const profileData = {
         name: response.data.fullName || response.data.name || "Admin",
         email: response.data.email || "N/A",
@@ -87,7 +86,7 @@ const ProfilePage = () => {
         adminId: response.data.adminId || "N/A",
         createdAt: formatDate(response.data.createdAt),
       };
-      
+
       setProfile(profileData);
       setForm({ name: profileData.name, email: profileData.email });
     } catch (err) {
@@ -95,11 +94,11 @@ const ProfilePage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -121,7 +120,7 @@ const ProfilePage = () => {
       updateUser(updatedData);
 
       setProfile(prev => ({ ...prev, name: form.name, email: form.email }));
-      
+
       Swal.fire({
         icon: "success",
         title: "Profile Updated!",
@@ -208,7 +207,7 @@ const ProfilePage = () => {
             <Tab label="Change Password" id="profile-tab-1" aria-controls="profile-tabpanel-1" />
           </Tabs>
         </Box>
-        
+
         <Box role="tabpanel" hidden={tabIndex !== 0} id="profile-tabpanel-0" aria-labelledby="profile-tab-0">
           <CardContent>
             <Typography variant="subtitle1" fontWeight={600} mb={3}>Personal Details</Typography>
@@ -217,9 +216,9 @@ const ProfilePage = () => {
               <InfoItem icon={<RoleIcon />} label="Role" value={profile.role} />
               <InfoItem icon={<DateIcon />} label="Account Created" value={profile.createdAt} />
             </Grid>
-            
+
             <Divider sx={{ my: 3 }} />
-            
+
             <Typography variant="subtitle1" fontWeight={600} mb={2}>Edit Information</Typography>
             <Stack spacing={3}>
               <TextField label="Full Name" name="name" value={form.name} onChange={handleChange} fullWidth disabled={saving} required />

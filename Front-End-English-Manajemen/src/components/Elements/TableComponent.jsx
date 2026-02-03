@@ -1,4 +1,3 @@
-//src/components/Elements/TableComponent.jsx
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
@@ -40,7 +39,7 @@ const TableComponent = ({
     }
   }, [searchValue, rows, columns]);
 
-  const CustomPaginationComponent = (props) => {
+  const CustomPaginationComponent = () => {
     return (
       <CustomPagination
         paginationModel={paginationModel}
@@ -82,7 +81,7 @@ const CustomPagination = ({
   const pageSize = paginationModel?.pageSize || 10;
   const currentPage = paginationModel?.page || 0;
   const totalRows = rowCount || 0;
-  
+
   const pageCount = Math.ceil(totalRows / pageSize) || 1;
   const startRecord = totalRows > 0 ? (currentPage * pageSize + 1) : 0;
   const endRecord = Math.min((currentPage + 1) * pageSize, totalRows);
@@ -190,7 +189,7 @@ const CustomPagination = ({
       </Box>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <Typography variant="body2">
-          {totalRows > 0 
+          {totalRows > 0
             ? `Showing ${startRecord} to ${endRecord} of ${totalRows} entries`
             : "No entries found"
           }

@@ -1,14 +1,12 @@
-// src/pages/TalentPages/TalentPronunciationCategoryDetail.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { Box, Grid, Breadcrumbs, Link, Avatar, Paper, CircularProgress, Alert, Button, Chip, IconButton } from "@mui/material";
-import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import TableComponent from "../../components/Elements/TableComponent";
 import CustomTypography from "../../components/Elements/CustomTypography";
 import { talentService } from "../../services/talentService";
 
 const TalentPronunciationCategoryDetail = () => {
-  const navigate = useNavigate();
   const { id, kategori } = useParams();
   const [talentData, setTalentData] = useState(null);
   const [exercises, setExercises] = useState([]);
@@ -58,7 +56,7 @@ const TalentPronunciationCategoryDetail = () => {
     { field: "bestScore", headerName: "Best Score", flex: 1, renderCell: (params) => <Chip label={params.row.bestScore} size="small" color={getScoreColor(params.row.bestScore)} /> },
     { field: "latestScore", headerName: "Latest Score", flex: 1, renderCell: (params) => <Chip label={params.row.latestScore} size="small" color={getScoreColor(params.row.latestScore)} /> },
   ];
-  
+
   if (loading && !talentData) {
     return <Box p={4} display="flex" justifyContent="center"><CircularProgress /></Box>;
   }
@@ -92,16 +90,16 @@ const TalentPronunciationCategoryDetail = () => {
           <CustomTypography variant="body2" color="text.secondary">Total Sentences: {totalData}</CustomTypography>
         </Box>
         {loading ? <Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box> :
-         error ? <Alert severity="error" sx={{ mb: 2 }}>{error}<Button onClick={fetchData} size="small" sx={{ ml: 2 }}>Retry</Button></Alert> :
-         <TableComponent
-            rows={exercises.map((ex, i) => ({ id: i, ...ex }))}
-            columns={columns}
-            paginationEnabled
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            rowCount={totalData}
-            loading={loading}
-          />
+          error ? <Alert severity="error" sx={{ mb: 2 }}>{error}<Button onClick={fetchData} size="small" sx={{ ml: 2 }}>Retry</Button></Alert> :
+            <TableComponent
+              rows={exercises.map((ex, i) => ({ id: i, ...ex }))}
+              columns={columns}
+              paginationEnabled
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              rowCount={totalData}
+              loading={loading}
+            />
         }
       </Paper>
     </Box>

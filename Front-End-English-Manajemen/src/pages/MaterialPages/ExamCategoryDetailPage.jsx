@@ -1,6 +1,5 @@
-// src/pages/MaterialPages/ExamCategoryDetailPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { 
+import {
   Box, Typography, Paper, IconButton, Breadcrumbs, Link as MuiLink, CircularProgress, Alert, Button, Stack, Chip, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemText, Grid
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -20,13 +19,13 @@ import EditExamPhoneme from "./Form/EditExamPhoneme";
 const ExamCategoryDetailPage = () => {
   const { category } = useParams();
   const decodedCategory = decodeURIComponent(category || "");
-  
+
   const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
   const [totalItems, setTotalItems] = useState(0);
-  
+
   const [addFormOpen, setAddFormOpen] = useState(false);
   const [sentenceDialogOpen, setSentenceDialogOpen] = useState(false);
   const [selectedExamSentences, setSelectedExamSentences] = useState([]);
@@ -44,10 +43,10 @@ const ExamCategoryDetailPage = () => {
         page: paginationModel.page + 1,
         limit: paginationModel.pageSize,
       });
-      
+
       let examsData = response.data?.exams || response.data?.data || [];
       let paginationData = response.data?.pagination || {};
-      
+
       const transformedExams = examsData.map((exam, index) => ({
         id: exam.exam_id || exam.id || index,
         testId: exam.exam_id || exam.id || index,
@@ -56,10 +55,10 @@ const ExamCategoryDetailPage = () => {
         lastUpdate: exam.last_update ? new Date(exam.last_update).toLocaleDateString("id-ID") : "N/A",
         examId: exam.exam_id || exam.id || index
       }));
-      
+
       setExams(transformedExams);
       setTotalItems(paginationData.totalRecords || examsData.length);
-      
+
     } catch (err) {
       setError(err.message || "Failed to load exam data");
       setExams([]);
@@ -104,7 +103,7 @@ const ExamCategoryDetailPage = () => {
         Swal.fire("Info", "No sentences found for this exam.", "info");
       }
     } catch (error) {
-      Swal.fire("Error!", "Failed to load exam sentences.", "error");
+      Swal.fire("Error!", error.message || "Failed to load exam sentences.", "error");
     }
   };
 
@@ -125,7 +124,7 @@ const ExamCategoryDetailPage = () => {
         Swal.fire("Error!", "Failed to load exam data for editing.", "error");
       }
     } catch (error) {
-      Swal.fire("Error!", "Failed to load exam data for editing.", "error");
+      Swal.fire("Error!", error.message || "Failed to load exam data for editing.", "error");
     }
   };
 
@@ -179,7 +178,7 @@ const ExamCategoryDetailPage = () => {
         <MuiLink component={RouterLink} to="/material/pronunciation" underline="hover" color="inherit">PRONUNCIATION MATERIAL</MuiLink>
         <CustomTypography color="text.primary">Exam Phoneme: {decodedCategory}</CustomTypography>
       </Breadcrumbs>
-      
+
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h5" fontWeight={600}>Phoneme Exam Detail</Typography>
         <Stack direction="row" spacing={1}>
@@ -206,7 +205,7 @@ const ExamCategoryDetailPage = () => {
           </Grid>
         </Grid>
       </Paper>
-      
+
       <Paper sx={{ p: 3, borderRadius: 3 }}>
         {loading ? (
           <Box display="flex" justifyContent="center" p={8}><CircularProgress /></Box>
@@ -237,8 +236,8 @@ const ExamCategoryDetailPage = () => {
       <EditExamPhoneme open={editFormOpen} onClose={() => setEditFormOpen(false)} onSubmit={handleEditSubmit} examData={editExamData} category={decodedCategory} />
 
       <Dialog open={sentenceDialogOpen} onClose={() => setSentenceDialogOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>
-          <Typography variant="h6" fontWeight={600}>Exam Sentences Detail</Typography>
+        <DialogTitle component="div">
+          <Typography variant="h6" component="h2" fontWeight={600}>Exam Sentences Detail</Typography>
           {selectedExamInfo && <Typography variant="body2" color="text.secondary">{selectedExamInfo.testId} - Category: {selectedExamInfo.phonemeCategory}</Typography>}
         </DialogTitle>
         <DialogContent>

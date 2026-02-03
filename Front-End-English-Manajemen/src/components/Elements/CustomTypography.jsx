@@ -1,5 +1,3 @@
-// src/components/Elements/CustomTypography.jsx
-import React from "react";
 import { Typography } from "@mui/material";
 
 const CustomTypography = ({

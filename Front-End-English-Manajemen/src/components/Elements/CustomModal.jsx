@@ -1,4 +1,3 @@
-//src/components/Elements/CustomModal.jsx
 import React from "react";
 import {
   Modal,

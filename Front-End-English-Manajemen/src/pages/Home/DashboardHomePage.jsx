@@ -208,7 +208,7 @@ const DashboardHomePage = () => {
   const totalActivities = dashboardData?.totalActivities || 0;
   const dateRange = dashboardData?.dateRange || "Last 30 days";
   const hasError = dashboardData?.hasError || false;
-  const activitySettingsData = dashboardData?.activitySettings || {};
+  // FIX: Removed unused 'activitySettingsData'
 
   const stats = [
     { 
@@ -550,7 +550,6 @@ const DashboardHomePage = () => {
                       onClick={() => handleRowClick(activity)}
                     >
                       <TableCell>
-                        {/* ✅ FIX: Only show talent name, no ID */}
                         <Typography variant="body2" fontWeight={500} color="primary">
                           {activity.talentName}
                         </Typography>

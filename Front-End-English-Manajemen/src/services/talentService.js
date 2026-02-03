@@ -1,160 +1,92 @@
-// src/services/talentService.js
 import apiClient from "./apiConfig";
 
-const handleApiResponse = (response) => {
-  if (response.data && response.data.success && response.data.data !== undefined) {
-    return response.data.data;
-  }
-  if (response.data && response.data.success) {
-    return response.data;
-  }
-  throw new Error(response.data?.message || "Invalid response format from server");
+const buildParams = (params) => {
+  const query = new URLSearchParams();
+  if (params.page) query.append("page", params.page);
+  if (params.limit) query.append("limit", params.limit);
+  if (params.search) query.append("searchQuery", params.search);
+  return query.toString();
 };
 
 export const talentService = {
   getTalentList: async (params = {}) => {
-    try {
-      const queryParams = new URLSearchParams({
-        page: params.page || 1,
-        limit: params.limit || 10,
-      });
-      if (params.search) {
-        queryParams.append("searchQuery", params.search);
-      }
-      const response = await apiClient.get(`/web/admin/talents?${queryParams}`);
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    const queryString = buildParams(params);
+    const response = await apiClient.get(`/web/admin/talents?${queryString}`);
+    return response.data;
   },
 
   getTalentById: async (talentId) => {
-    try {
-      const response = await apiClient.get(`/web/admin/talents/${talentId}`);
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    const response = await apiClient.get(`/web/admin/talents/${talentId}`);
+    return response.data;
   },
 
   getTalentProgress: async (talentId, category, params = {}) => {
-    try {
-      const queryParams = new URLSearchParams({
-        page: params.page || 1,
-        limit: params.limit || 10,
-      });
-      const response = await apiClient.get(`/web/admin/talents/${talentId}/${category}?${queryParams}`);
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    const queryString = buildParams(params);
+    const response = await apiClient.get(`/web/admin/talents/${talentId}/${category}?${queryString}`);
+    return response.data;
   },
-  
+
   getTalentDetailProgress: async (talentId, category, subCategory, params = {}) => {
-    try {
-      const queryParams = new URLSearchParams({
-        page: params.page || 1,
-        limit: params.limit || 10,
-      });
-      const endpoint = `/web/admin/talents/${talentId}/${category}/${encodeURIComponent(subCategory)}/detail`;
-      const response = await apiClient.get(`${endpoint}?${queryParams}`);
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    const queryString = buildParams(params);
+    const endpoint = `/web/admin/talents/${talentId}/${category}/${encodeURIComponent(subCategory)}/detail`;
+    const response = await apiClient.get(`${endpoint}?${queryString}`);
+    return response.data;
   },
 
   getTalentInterviewDetail: async (talentId, attemptId) => {
-    try {
-        const response = await apiClient.get(`/web/admin/talents/${talentId}/interview/${attemptId}/detail`);
-        return handleApiResponse(response);
-    } catch (error) {
-        throw error.response?.data || error;
-    }
+    const response = await apiClient.get(`/web/admin/talents/${talentId}/interview/${attemptId}/detail`);
+    return response.data;
   },
 
   getTalentExamAttemptDetail: async (talentId, attemptId) => {
-    try {
-      const response = await apiClient.get(`/web/admin/talents/${talentId}/phoneme-exam/attempt/${attemptId}/detail`);
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    const response = await apiClient.get(`/web/admin/talents/${talentId}/phoneme-exam/attempt/${attemptId}/detail`);
+    return response.data;
   },
 
   addTalent: async (talentData) => {
-    try {
-      const response = await apiClient.post("/web/admin/talents", {
-        nama: talentData.name,
-        email: talentData.email,
-        role: talentData.role,
-        password: talentData.password
-      });
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    return await apiClient.post("/web/admin/talents", {
+      nama: talentData.name,
+      email: talentData.email,
+      role: talentData.role,
+      password: talentData.password
+    });
   },
 
   editTalent: async (talentId, talentData) => {
-    try {
-      const response = await apiClient.put(`/web/admin/talents/${talentId}`, {
-        nama: talentData.name,
-        email: talentData.email,
-        role: talentData.role
-      });
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    return await apiClient.put(`/web/admin/talents/${talentId}`, {
+      nama: talentData.name,
+      email: talentData.email,
+      role: talentData.role
+    });
   },
 
   deleteTalent: async (talentId) => {
-    try {
-      const response = await apiClient.delete(`/web/admin/talents/${talentId}`);
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    return await apiClient.delete(`/web/admin/talents/${talentId}`);
   },
 
   changeTalentPassword: async (talentId, passwordData) => {
-    try {
-      const response = await apiClient.put(`/web/admin/talents/${talentId}/change-password`, {
-        new_password: passwordData.new_password
-      });
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    return await apiClient.put(`/web/admin/talents/${talentId}/change-password`, {
+      new_password: passwordData.new_password
+    });
   },
 
   getTalentTemplate: async () => {
-    try {
-      const response = await apiClient.get("/web/admin/talents/import-template", {
-        responseType: 'blob',
-      });
-      return response;
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    return await apiClient.get("/web/admin/talents/import-template", {
+      responseType: 'blob',
+    });
   },
 
   importTalents: async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await apiClient.post(
-        "/web/admin/talents/import",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          timeout: 60000,
-        }
-      );
-      return handleApiResponse(response);
-    } catch (error) {
-      throw error.response?.data || error;
-    }
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await apiClient.post(
+      "/web/admin/talents/import",
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 60000,
+      }
+    );
+    return response.data;
   },
 };

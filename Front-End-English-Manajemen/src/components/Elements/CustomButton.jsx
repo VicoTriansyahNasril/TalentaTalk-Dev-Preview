@@ -1,11 +1,10 @@
-//src/components/Elements/CustomButton.jsx
 import React from "react";
 import { Button } from "@mui/material";
 import { styled } from "@mui/system";
 
-const StyledButton = styled(({ colorScheme, ...otherProps }) => (
-  <Button {...otherProps} />
-))(({ theme, colorScheme }) => {
+const StyledButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== "colorScheme",
+})(({ theme, colorScheme }) => {
   let backgroundColor;
   let colorFont;
   let hoverBackgroundColor;

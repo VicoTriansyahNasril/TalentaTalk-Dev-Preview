@@ -1,4 +1,3 @@
-// src/components/Layout/DashboardLayout.jsx
 import React, { useState } from "react";
 import { Box, useMediaQuery, Toolbar } from "@mui/material";
 import Sidebar from "./Sidebar";

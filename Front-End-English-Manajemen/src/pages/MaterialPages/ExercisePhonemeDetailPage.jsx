@@ -1,154 +1,269 @@
-// src/pages/TalentPages/TalentPhonemeMaterialExerciseDetail.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Grid, Breadcrumbs, Link, Avatar, Paper, CircularProgress, Alert, Button, Chip, IconButton, Typography, Divider, Stack } from "@mui/material";
-import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";
+import { 
+  Box, 
+  Typography, 
+  Paper, 
+  IconButton, 
+  Breadcrumbs, 
+  Link as MuiLink, 
+  CircularProgress, 
+  Alert, 
+  Button, 
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Grid,
+  Chip
+} from "@mui/material";
+import { useParams, Link as RouterLink } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import TableComponent from "../../components/Elements/TableComponent";
 import CustomTypography from "../../components/Elements/CustomTypography";
-import { talentService } from "../../services/talentService";
-import StarIcon from '@mui/icons-material/Star';
+import { materialService } from "../../services/materialService";
+import Swal from "sweetalert2";
+import TableComponent from "../../components/Elements/TableComponent";
 
-const TalentPhonemeMaterialExerciseDetail = () => {
-  const navigate = useNavigate();
-  const { id, phoneme } = useParams();
-  const [talentData, setTalentData] = useState(null);
-  const [exercises, setExercises] = useState([]);
+const ExercisePhonemeDetailPage = () => {
+  const { category } = useParams();
+  const decodedCategory = decodeURIComponent(category || "");
+  
+  const [sentences, setSentences] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
-  const [totalData, setTotalData] = useState(0);
-  const [categoryStats, setCategoryStats] = useState({ avgScore: '0%', attempted: '0/0' });
+  const [totalItems, setTotalItems] = useState(0);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingSentence, setEditingSentence] = useState(null);
+  const [editForm, setEditForm] = useState({ sentence: "", phoneme: "" });
 
-  const decodedPhoneme = decodeURIComponent(phoneme || "");
-
-  const fetchData = useCallback(async () => {
-    if (!id || !decodedPhoneme) return;
+  const fetchSentences = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await talentService.getTalentDetailProgress(id, "phoneme-material-exercise", decodedPhoneme, {
+      const response = await materialService.getPhonemeSentencesByCategory(decodedCategory, {
         page: paginationModel.page + 1,
         limit: paginationModel.pageSize,
       });
-
-      const wordsData = response.phonemeDetail?.words || [];
-      setTalentData(response.talentInfo);
-      setExercises(wordsData);
-      setTotalData(response.pagination?.totalRecords || 0);
-
-      // Calculate statistics on the frontend from the fetched page data
-      if (wordsData.length > 0) {
-        let totalScore = 0;
-        let attemptedCount = 0;
-        wordsData.forEach(word => {
-          if (word.latestAttempted !== "N/A") {
-            totalScore += parseFloat(word.bestScore.replace('%', '')) || 0;
-            attemptedCount++;
-          }
-        });
-        const avgScore = attemptedCount > 0 ? totalScore / attemptedCount : 0;
-        setCategoryStats({
-          avgScore: `${Math.round(avgScore)}%`,
-          attempted: `${attemptedCount} attempted`
-        });
-      } else {
-        setCategoryStats({ avgScore: '0%', attempted: '0 attempted' });
+      
+      let sentencesData = [];
+      let paginationData = {};
+      
+      if (response.data) {
+        sentencesData = response.data.data || [];
+        paginationData = response.data.pagination || {};
       }
-
+      
+      setSentences(sentencesData);
+      setTotalItems(paginationData.totalRecords || sentencesData.length);
+      
     } catch (err) {
-      setError(err.message || "Failed to load phoneme material details");
+      console.error(err);
+      setError(err.message || "Failed to load sentence data");
+      setSentences([]);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
-  }, [id, decodedPhoneme, paginationModel]);
+  }, [decodedCategory, paginationModel]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchSentences();
+  }, [fetchSentences]);
 
-  const getScoreColor = (score) => {
-    const value = parseFloat(score?.replace('%', '') || 0);
-    if (value >= 80) return "success";
-    if (value >= 70) return "warning";
-    return "error";
+  const handleDelete = async (sentenceId, sentenceText) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `Delete sentence: "${sentenceText.substring(0, 30)}..."?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await materialService.deletePhonemeSentence(sentenceId);
+        Swal.fire("Deleted!", "The sentence has been deleted.", "success");
+        fetchSentences();
+      } catch (err) {
+        Swal.fire("Error!", err.message || "Failed to delete the sentence.", "error");
+      }
+    }
   };
-  
-  const getInitials = (name) => (name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'T');
+
+  const handleEdit = (row) => {
+    setEditingSentence(row);
+    setEditForm({
+      sentence: row.sentence || row.kalimat || "",
+      phoneme: row.phoneme || row.fonem || ""
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditDialogOpen(false);
+    setEditingSentence(null);
+    setEditForm({ sentence: "", phoneme: "" });
+  };
+
+  const handleEditSubmit = async () => {
+    try {
+      if (!editForm.sentence.trim() || !editForm.phoneme.trim()) {
+        Swal.fire("Validation Error!", "All fields are required.", "error");
+        return;
+      }
+      
+      await materialService.updatePhonemeSentence(editingSentence.id, {
+        sentence: editForm.sentence.trim(),
+        phoneme: editForm.phoneme.trim()
+      });
+      
+      Swal.fire("Success!", "Sentence updated successfully.", "success");
+      handleEditClose();
+      fetchSentences();
+      
+    } catch (err) {
+      Swal.fire("Error!", err.message || "Failed to update sentence.", "error");
+    }
+  };
 
   const columns = [
-    { field: "word", headerName: "Word", flex: 1, renderCell: (params) => <CustomTypography variant="body2" fontWeight={500}>{params.row.word}</CustomTypography> },
-    { field: "latestAttempted", headerName: "Latest Attempted", flex: 1.5, renderCell: (params) => <CustomTypography variant="body2">{params.row.latestAttempted}</CustomTypography> },
-    { field: "bestScore", headerName: "Best Score", flex: 1, renderCell: (params) => <Chip label={params.row.bestScore} size="small" color={getScoreColor(params.row.bestScore)} /> },
-    { field: "latestScore", headerName: "Latest Score", flex: 1, renderCell: (params) => <Chip label={params.row.latestScore} size="small" color={getScoreColor(params.row.latestScore)} /> },
+    { 
+      field: "sentence", 
+      headerName: "Sentence", 
+      flex: 3,
+      renderCell: (params) => (
+        <Typography variant="body2" sx={{ whiteSpace: "normal", py: 1 }}>
+          {params.value}
+        </Typography>
+      )
+    },
+    { 
+      field: "phoneme", 
+      headerName: "Phoneme Transcription", 
+      flex: 1.5,
+      renderCell: (params) => (
+        <Chip 
+          label={params.value || ""}
+          variant="outlined"
+          size="small"
+          sx={{ fontFamily: 'monospace', bgcolor: 'background.paper' }}
+        />
+      )
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      width: 120,
+      sortable: false,
+      renderCell: (params) => (
+        <Stack direction="row" spacing={1}>
+          <IconButton size="small" title="Edit" onClick={() => handleEdit(params.row)} sx={{ color: "primary.main" }}>
+            <EditIcon />
+          </IconButton>
+          <IconButton size="small" title="Delete" onClick={() => handleDelete(params.row.id, params.row.sentence)} sx={{ color: "error.main" }}>
+            <DeleteIcon />
+          </IconButton>
+        </Stack>
+      ),
+    },
   ];
-
-  if (loading && !talentData) {
-    return <Box p={4} display="flex" justifyContent="center"><CircularProgress /></Box>;
-  }
-
-  if (error && !talentData) {
-    return <Box p={4}><Alert severity="error">{error}</Alert></Box>;
-  }
 
   return (
     <Box p={4}>
-      <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
-        <Link component={RouterLink} to="/talents" underline="hover" color="inherit">Talent List</Link>
-        <Link component={RouterLink} to={`/talent/${id}`} underline="hover" color="inherit">{talentData?.nama}</Link>
-        <CustomTypography color="text.primary">Phoneme Material Detail</CustomTypography>
+      <Breadcrumbs aria-label="breadcrumb" mb={2}>
+        <MuiLink component={RouterLink} to="/material/exercise" underline="hover" color="inherit">
+          EXERCISE MATERIAL
+        </MuiLink>
+        <CustomTypography color="text.primary">
+          Category: {decodedCategory}
+        </CustomTypography>
       </Breadcrumbs>
-
-      <Paper elevation={2} sx={{ p: 2, mb: 3, borderRadius: 3 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Avatar sx={{ width: 56, height: 56, bgcolor: "primary.main" }}>{getInitials(talentData?.nama)}</Avatar>
-            <Box>
-              <CustomTypography variant="h6" fontWeight={600}>{talentData?.nama}</CustomTypography>
-              <CustomTypography variant="body2" color="text.secondary">{talentData?.email}</CustomTypography>
-            </Box>
-          </Stack>
-          <IconButton onClick={fetchData} disabled={loading} title="Refresh Data"><RefreshIcon /></IconButton>
-        </Stack>
-      </Paper>
       
-      <Paper elevation={1} sx={{ p: 3 }}>
-        <Box>
-          <Typography variant="h6" fontWeight={600}>Phoneme Material: {decodedPhoneme}</Typography>
-          <Typography variant="body2" color="text.secondary">Detailed performance on individual word pronunciation.</Typography>
-        </Box>
-        <Divider sx={{ my: 2 }} />
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={6} md={4}>
-            <Typography variant="caption" color="text.secondary">Avg. Accuracy (this page)</Typography>
-            <Chip icon={<StarIcon />} label={categoryStats.avgScore} color={getScoreColor(categoryStats.avgScore)} sx={{ fontWeight: 600, mt: 0.5 }} />
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Typography variant="h5" fontWeight={600}>Exercise Sentence Detail</Typography>
+        <IconButton onClick={fetchSentences} disabled={loading} title="Refresh Data" sx={{ color: "primary.main" }}>
+          <RefreshIcon />
+        </IconButton>
+      </Box>
+
+      <Paper sx={{ p: 2, mb: 3, bgcolor: 'grey.50', border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={6}>
+            <Typography variant="body2" color="text.secondary">Total: <strong>{totalItems}</strong> sentences</Typography>
+            <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+              <Typography variant="body2" color="text.secondary">Target phonemes:</Typography>
+              <Chip label={decodedCategory} size="small" color="primary" variant="outlined" />
+            </Box>
           </Grid>
-          <Grid item xs={6} md={4}>
-            <Typography variant="caption" color="text.secondary">Words Attempted (this page)</Typography>
-            <Typography variant="body1" fontWeight={600}>{categoryStats.attempted}</Typography>
+          <Grid item xs={12} md={6}>
+            <Alert severity="info" sx={{ py: 1 }}>
+              <Typography variant="caption">
+                <strong>Instruction:</strong> These sentences are used for <em>Sentence Practice</em> mode to train similar phonemes.
+              </Typography>
+            </Alert>
           </Grid>
         </Grid>
-        
-        {loading ? <Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box> :
-         error ? <Alert severity="error" sx={{ mb: 2 }}>{error}<Button onClick={fetchData} size="small" sx={{ ml: 2 }}>Retry</Button></Alert> :
-         exercises.length === 0 ? (
+      </Paper>
+
+      <Paper sx={{ p: 3, borderRadius: 3 }}>
+        {loading ? (
+          <Box display="flex" justifyContent="center" p={8}><CircularProgress /></Box>
+        ) : error ? (
+          <Alert severity="error">{error}<Button onClick={fetchSentences} sx={{ ml: 2 }}>Retry</Button></Alert>
+        ) : sentences.length === 0 ? (
           <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" py={8} sx={{ border: '2px dashed', borderColor: 'grey.300', borderRadius: 2, backgroundColor: 'grey.50' }}>
-            <Typography variant="h6" color="text.secondary" gutterBottom>No Activity Yet</Typography>
-            <Typography variant="body2" color="text.secondary">This talent has not practiced any words in the "{decodedPhoneme}" category.</Typography>
+            <Typography variant="h6" color="text.secondary" gutterBottom>No Sentences Found</Typography>
+            <Typography variant="body2" color="text.secondary">There are no practice sentences for category "{decodedCategory}".</Typography>
           </Box>
-         ) : (
+        ) : (
           <TableComponent
-            rows={exercises.map((ex, i) => ({ id: i, ...ex }))}
+            rows={sentences.map(s => ({ id: s.id, ...s }))}
             columns={columns}
             paginationEnabled
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
-            rowCount={totalData}
+            rowCount={totalItems}
             loading={loading}
+            disableRowSelectionOnClick
+            getRowId={(row) => row.id}
+            rowHeight={80}
           />
         )}
       </Paper>
+
+      <Dialog open={editDialogOpen} onClose={handleEditClose} maxWidth="md" fullWidth>
+        <DialogTitle>Edit Sentence</DialogTitle>
+        <DialogContent>
+          <Stack spacing={3} sx={{ mt: 1 }}>
+            <TextField
+              label="Sentence"
+              fullWidth
+              multiline
+              rows={2}
+              value={editForm.sentence}
+              onChange={(e) => setEditForm({ ...editForm, sentence: e.target.value })}
+            />
+            <TextField
+              label="Phoneme Transcription"
+              fullWidth
+              value={editForm.phoneme}
+              onChange={(e) => setEditForm({ ...editForm, phoneme: e.target.value })}
+              helperText={`Must contain phonemes: ${decodedCategory}`}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditClose}>Cancel</Button>
+          <Button variant="contained" onClick={handleEditSubmit}>Update</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
-export default TalentPhonemeMaterialExerciseDetail;
+export default ExercisePhonemeDetailPage;

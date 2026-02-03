@@ -1,4 +1,3 @@
-// src/components/Elements/InstructionModal.jsx
 import React from 'react';
 import {
   Dialog,

@@ -1,4 +1,3 @@
-// src/pages/MaterialPages/Form/EditExamPhoneme.jsx
 import React, { useState, useEffect } from "react";
 import { 
   Dialog, 
@@ -64,7 +63,6 @@ const EditExamPhoneme = ({ open, onClose, onSubmit, examData, category }) => {
     };
     setFormData({ sentences: newSentences });
     
-    // Clear validation error
     if (validationErrors[`sentence${index}_${field}`]) {
       setValidationErrors(prev => ({ ...prev, [`sentence${index}_${field}`]: "" }));
     }

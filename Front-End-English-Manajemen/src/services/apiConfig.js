@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 60000,
 });
 
 apiClient.interceptors.request.use(
@@ -18,31 +18,36 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 apiClient.interceptors.response.use(
   (response) => {
-    return response;
+    if (response.config.responseType === 'blob') {
+      return response;
+    }
+    return response.data;
   },
   (error) => {
-    console.error('API Error:', {
-      status: error.response?.status,
-      url: error.config?.url,
-      message: error.response?.data?.detail || error.message
-    });
+    const status = error.response?.status;
+    const errorData = error.response?.data;
 
-    if (error.response?.status === 401) {
+    if (status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('lastLoginEmail');
-
       if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login';
       }
     }
-    return Promise.reject(error);
+
+    const customError = {
+      status,
+      message: errorData?.message || errorData?.detail || error.message || "An unexpected error occurred",
+      data: errorData,
+      originalError: error
+    };
+
+    return Promise.reject(customError);
   }
 );
 

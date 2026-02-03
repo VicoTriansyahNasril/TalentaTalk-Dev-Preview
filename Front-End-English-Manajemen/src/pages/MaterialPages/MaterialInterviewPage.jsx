@@ -1,19 +1,17 @@
-// src/pages/MaterialPages/MaterialInterviewPage.jsx
-
 import React, { useState, useEffect, useCallback } from "react";
-import { 
-  Box, 
-  Typography, 
-  IconButton, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions, 
-  Button, 
-  TextField, 
-  Paper, 
-  Stack, 
-  CircularProgress, 
+import {
+  Box,
+  Typography,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Paper,
+  Stack,
+  CircularProgress,
   Alert,
   Chip,
   Tooltip,
@@ -52,7 +50,7 @@ const MaterialInterviewPage = () => {
         page: paginationModel.page + 1,
         pageSize: paginationModel.pageSize,
       });
-      
+
       if (response.data && response.data.interviewQuestions) {
         setQuestions(response.data.interviewQuestions);
         setTotalItems(response.data.pagination?.totalRecords || 0);
@@ -61,7 +59,8 @@ const MaterialInterviewPage = () => {
         setTotalItems(0);
       }
     } catch (err) {
-      setError(err.message || "Failed to load interview materials");
+      const errorMessage = err.response?.data?.message || err.message || "Failed to load interview materials";
+      setError(errorMessage);
       setQuestions([]);
       setTotalItems(0);
     } finally {
@@ -100,15 +99,16 @@ const MaterialInterviewPage = () => {
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel"
     });
-    
+
     if (result.isConfirmed) {
       try {
         const questionId = parseInt(item.questionId.replace('QST', ''));
         await materialService.deleteInterviewMaterial(questionId);
         Swal.fire("Deleted!", "Question has been deleted.", "success");
         fetchInterviewMaterials();
-      } catch (error) {
-        Swal.fire("Error!", error.message || "Failed to delete question.", "error");
+      } catch (err) {
+        const errorMessage = err.response?.data?.message || err.message || "Failed to delete question.";
+        Swal.fire("Error!", errorMessage, "error");
       }
     }
   };
@@ -116,7 +116,7 @@ const MaterialInterviewPage = () => {
   const handleSwap = async (item, direction) => {
     const questionId = parseInt(item.questionId.replace('QST', ''));
     setSwapLoading(questionId);
-    
+
     try {
       await materialService.swapQuestionOrder(questionId, direction);
       Swal.fire({
@@ -127,10 +127,12 @@ const MaterialInterviewPage = () => {
         showConfirmButton: false
       });
       fetchInterviewMaterials();
-    } catch (error) {
+    } catch (err) {
       let errorMessage = "Failed to swap question order";
-      if (error.message && error.message.includes("already at the")) {
-        errorMessage = error.message;
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message && err.message.includes("already at the")) {
+        errorMessage = err.message;
       }
       Swal.fire("Error!", errorMessage, "error");
     } finally {
@@ -143,13 +145,13 @@ const MaterialInterviewPage = () => {
     setToggleLoading(id);
     try {
       await materialService.toggleInterviewQuestionStatus(id);
-      
-      setQuestions(prev => 
-        prev.map(q => 
+
+      setQuestions(prev =>
+        prev.map(q =>
           q.questionId === questionId ? { ...q, isActive: !q.isActive } : q
         )
       );
-      
+
       Swal.fire({
         toast: true,
         position: 'top-end',
@@ -158,8 +160,9 @@ const MaterialInterviewPage = () => {
         showConfirmButton: false,
         timer: 2000
       });
-    } catch (error) {
-      Swal.fire("Error!", error.message || "Failed to update status.", "error");
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || "Failed to update status.";
+      Swal.fire("Error!", errorMessage, "error");
     } finally {
       setToggleLoading(null);
     }
@@ -168,12 +171,12 @@ const MaterialInterviewPage = () => {
   const handleViewMobileOrder = async () => {
     try {
       const response = await materialService.getQuestionsForMobile();
-      
+
       if (response.data && response.data.questions) {
-        const orderList = response.data.questions.map((q, index) => 
+        const orderList = response.data.questions.map((q, index) =>
           `${index + 1}. ${q.question}`
         ).join('\n');
-        
+
         Swal.fire({
           title: "Mobile Question Order (Active Only)",
           html: `
@@ -187,7 +190,9 @@ const MaterialInterviewPage = () => {
         });
       }
     } catch (error) {
-      Swal.fire("Error!", "Failed to load mobile question order", "error");
+      const errorMessage = error.response?.data?.message || error.message || "Failed to load mobile question order";
+      console.error("View mobile order error:", error);
+      Swal.fire("Error!", errorMessage, "error");
     }
   };
 
@@ -211,25 +216,29 @@ const MaterialInterviewPage = () => {
 
       if (editItem) {
         const questionId = parseInt(editItem.questionId.replace('QST', ''));
-        await materialService.updateInterviewMaterial(questionId, { 
-          interview_question: inputValue.trim() 
+        await materialService.updateInterviewMaterial(questionId, {
+          interview_question: inputValue.trim()
         });
         Swal.fire("Success!", "Question updated successfully.", "success");
       } else {
-        await materialService.addInterviewMaterial({ 
-          interview_question: inputValue.trim() 
+        await materialService.addInterviewMaterial({
+          interview_question: inputValue.trim()
         });
         Swal.fire("Success!", "Question added successfully.", "success");
       }
-      
+
       handleCloseDialog();
       fetchInterviewMaterials();
-    } catch (error) {
+    } catch (err) {
       let errorMessage = "Failed to save question.";
-      if (error.message && error.message.includes("already exists")) {
-        errorMessage = "This question already exists.";
-      } else if (error.message) {
-        errorMessage = error.message;
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        if (err.message.includes("already exists")) {
+          errorMessage = "This question already exists.";
+        } else {
+          errorMessage = err.message;
+        }
       }
       Swal.fire("Error!", errorMessage, "error");
     }
@@ -245,12 +254,12 @@ const MaterialInterviewPage = () => {
       headerName: "#",
       width: 60,
       renderCell: (params) => (
-        <Box 
-          display="flex" 
-          alignItems="center" 
-          justifyContent="center" 
-          sx={{ 
-            fontWeight: 600, 
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          sx={{
+            fontWeight: 600,
             color: "primary.main",
             minHeight: "100%"
           }}
@@ -259,14 +268,14 @@ const MaterialInterviewPage = () => {
         </Box>
       )
     },
-    { 
-      field: "interviewQuestion", 
-      headerName: "Interview Question", 
+    {
+      field: "interviewQuestion",
+      headerName: "Interview Question",
       flex: 3,
       renderCell: (params) => (
-        <Typography 
-          variant="body2" 
-          sx={{ 
+        <Typography
+          variant="body2"
+          sx={{
             wordBreak: "break-word",
             whiteSpace: "normal",
             lineHeight: 1.4,
@@ -291,7 +300,7 @@ const MaterialInterviewPage = () => {
             />
           }
           label={
-            <Chip 
+            <Chip
               label={params.value ? "Active" : "Inactive"}
               color={params.value ? "success" : "default"}
               size="small"
@@ -300,17 +309,10 @@ const MaterialInterviewPage = () => {
         />
       )
     },
-    { 
-      field: "createdAt", 
-      headerName: "Last Update", 
+    {
+      field: "createdAt",
+      headerName: "Last Update",
       width: 120,
-      renderCell: (params) => {
-        try {
-          return new Date(params.value).toLocaleDateString("id-ID");
-        } catch (e) {
-          return params.value || "N/A";
-        }
-      }
     },
     {
       field: "action",
@@ -320,12 +322,12 @@ const MaterialInterviewPage = () => {
       renderCell: (params) => {
         const questionId = parseInt(params.row.questionId.replace('QST', ''));
         const isSwapLoading = swapLoading === questionId;
-        
+
         return (
           <Stack direction="row" spacing={0.5}>
             <Tooltip title="Move Up">
-              <IconButton 
-                onClick={() => handleSwap(params.row, "up")} 
+              <IconButton
+                onClick={() => handleSwap(params.row, "up")}
                 size="small"
                 disabled={isSwapLoading}
                 sx={{ color: "success.main" }}
@@ -333,10 +335,10 @@ const MaterialInterviewPage = () => {
                 {isSwapLoading ? <CircularProgress size={16} /> : <KeyboardArrowUpIcon fontSize="small" />}
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Move Down">
-              <IconButton 
-                onClick={() => handleSwap(params.row, "down")} 
+              <IconButton
+                onClick={() => handleSwap(params.row, "down")}
                 size="small"
                 disabled={isSwapLoading}
                 sx={{ color: "warning.main" }}
@@ -344,21 +346,21 @@ const MaterialInterviewPage = () => {
                 {isSwapLoading ? <CircularProgress size={16} /> : <KeyboardArrowDownIcon fontSize="small" />}
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Edit Question">
-              <IconButton 
-                onClick={() => handleOpenEdit(params.row)} 
+              <IconButton
+                onClick={() => handleOpenEdit(params.row)}
                 size="small"
                 sx={{ color: "primary.main" }}
               >
                 <EditIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Delete Question">
-              <IconButton 
-                onClick={() => handleDelete(params.row)} 
-                size="small" 
+              <IconButton
+                onClick={() => handleDelete(params.row)}
+                size="small"
                 sx={{ color: "error.main" }}
               >
                 <DeleteIcon fontSize="small" />
@@ -391,16 +393,16 @@ const MaterialInterviewPage = () => {
         </Box>
         <Stack direction="row" spacing={1}>
           <Tooltip title="View Mobile Question Order (Active Only)">
-            <IconButton 
+            <IconButton
               onClick={handleViewMobileOrder}
               sx={{ color: "info.main" }}
             >
               <PhoneAndroidIcon />
             </IconButton>
           </Tooltip>
-          <IconButton 
-            onClick={fetchInterviewMaterials} 
-            disabled={loading} 
+          <IconButton
+            onClick={fetchInterviewMaterials}
+            disabled={loading}
             title="Refresh Data"
             sx={{ color: "primary.main" }}
           >
@@ -408,7 +410,7 @@ const MaterialInterviewPage = () => {
           </IconButton>
         </Stack>
       </Box>
-      
+
       <Paper elevation={2} sx={{ p: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={3}>
           <Box>
@@ -419,16 +421,16 @@ const MaterialInterviewPage = () => {
               Total: {totalItems} questions • Use ↑↓ arrows to reorder for mobile delivery
             </Typography>
           </Box>
-          <CustomButton 
-            colorScheme="bgBlue" 
-            startIcon={<AddIcon />} 
-            onClick={handleOpenAdd} 
+          <CustomButton
+            colorScheme="bgBlue"
+            startIcon={<AddIcon />}
+            onClick={handleOpenAdd}
             disabled={loading}
           >
             Add Question
           </CustomButton>
         </Stack>
-        
+
         {loading ? (
           <Box display="flex" justifyContent="center" alignItems="center" p={8}>
             <CircularProgress />
@@ -439,9 +441,9 @@ const MaterialInterviewPage = () => {
         ) : error ? (
           <Alert severity="error" sx={{ mb: 2 }}>
             {error}
-            <Button 
-              size="small" 
-              onClick={fetchInterviewMaterials} 
+            <Button
+              size="small"
+              onClick={fetchInterviewMaterials}
               sx={{ ml: 2 }}
             >
               Retry
@@ -449,23 +451,23 @@ const MaterialInterviewPage = () => {
           </Alert>
         ) : (
           <TableComponent
-          rows={transformedQuestions}
-          columns={interviewColumns}
-          paginationEnabled={true}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          rowCount={totalItems}
-          loading={loading}
-          disableRowSelectionOnClick
-          getRowId={(row) => row.id}
-        />
+            rows={transformedQuestions}
+            columns={interviewColumns}
+            paginationEnabled={true}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            rowCount={totalItems}
+            loading={loading}
+            disableRowSelectionOnClick
+            getRowId={(row) => row.id}
+          />
         )}
       </Paper>
-      
-      <Dialog 
-        open={dialogOpen} 
-        onClose={handleCloseDialog} 
-        maxWidth="md" 
+
+      <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        maxWidth="md"
         fullWidth
         PaperProps={{
           sx: { minHeight: 400 }
@@ -480,21 +482,22 @@ const MaterialInterviewPage = () => {
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <TextField 
-            label="Interview Question" 
-            fullWidth 
-            multiline 
+          <TextField
+            label="Interview Question"
+            fullWidth
+            multiline
             minRows={4}
             maxRows={8}
-            value={inputValue} 
-            onChange={(e) => setInputValue(e.target.value)} 
-            autoFocus 
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            autoFocus
             sx={{ mt: 2 }}
             placeholder="Enter an interview question with at least 5 words..."
+            FormHelperTextProps={{ component: "div" }}
             helperText={
               <Box component="span" display="flex" justifyContent="space-between" alignItems="center">
                 <span>Question must contain at least 5 words</span>
-                <Chip 
+                <Chip
                   label={`${wordCount} words`}
                   color={isValidInput ? "success" : "default"}
                   size="small"
@@ -507,9 +510,9 @@ const MaterialInterviewPage = () => {
           <Button onClick={handleCloseDialog}>
             Cancel
           </Button>
-          <Button 
-            variant="contained" 
-            onClick={handleSave} 
+          <Button
+            variant="contained"
+            onClick={handleSave}
             disabled={!isValidInput}
             startIcon={editItem ? <EditIcon /> : <AddIcon />}
           >

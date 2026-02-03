@@ -1,4 +1,3 @@
-// src/pages/MaterialPages/PhonemeDetailPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import { 

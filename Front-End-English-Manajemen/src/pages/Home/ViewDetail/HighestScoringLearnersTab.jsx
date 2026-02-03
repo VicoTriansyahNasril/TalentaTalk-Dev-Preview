@@ -1,4 +1,3 @@
-// src/pages/Home/ViewDetail/HighestScoringLearnersTab.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { Box, Tabs, Tab, CircularProgress, Alert, Chip, IconButton, Typography, Paper } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";

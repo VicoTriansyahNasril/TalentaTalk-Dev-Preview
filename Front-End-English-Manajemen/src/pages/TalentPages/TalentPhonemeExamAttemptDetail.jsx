@@ -1,4 +1,3 @@
-// src/pages/TalentPages/TalentPhonemeExamAttemptDetail.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { 
   Box, Grid, Breadcrumbs, Link, Avatar, Paper, CircularProgress, Alert, 

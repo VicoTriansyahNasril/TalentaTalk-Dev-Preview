@@ -1,4 +1,3 @@
-// src/pages/TalentPages/TalentListPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
@@ -201,7 +200,6 @@ const TalentListPage = () => {
   const columns = [
     { field: "talentName", headerName: "Talent Name", flex: 1.5 },
     { field: "pretest", headerName: "Pretest", flex: 1 },
-    // PERUBAHAN DI SINI: Mengganti field dan headerName
     { field: "highestExam", headerName: "Highest Exam Score", flex: 1 },
     {
       field: "progress",

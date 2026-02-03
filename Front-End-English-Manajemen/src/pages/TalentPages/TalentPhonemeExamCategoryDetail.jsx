@@ -1,4 +1,3 @@
-// src/pages/TalentPages/TalentPhonemeExamCategoryDetail.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { Box, Grid, Breadcrumbs, Link, Avatar, Paper, CircularProgress, Alert, Button, Chip, IconButton } from "@mui/material";
 import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";

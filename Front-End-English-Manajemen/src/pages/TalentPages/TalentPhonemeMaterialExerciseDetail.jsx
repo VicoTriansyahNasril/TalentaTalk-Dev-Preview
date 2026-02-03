@@ -1,14 +1,13 @@
-// src/pages/TalentPages/TalentPhonemeMaterialExerciseDetail.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Grid, Breadcrumbs, Link, Avatar, Paper, CircularProgress, Alert, Button, Chip, IconButton } from "@mui/material";
-import { useNavigate, useParams, Link as RouterLink } from "react-router-dom";
+import { Box, Grid, Breadcrumbs, Link, Avatar, Paper, CircularProgress, Alert, Button, Chip, IconButton, Typography, Divider, Stack } from "@mui/material";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import TableComponent from "../../components/Elements/TableComponent";
 import CustomTypography from "../../components/Elements/CustomTypography";
 import { talentService } from "../../services/talentService";
+import StarIcon from '@mui/icons-material/Star';
 
 const TalentPhonemeMaterialExerciseDetail = () => {
-  const navigate = useNavigate();
   const { id, phoneme } = useParams();
   const [talentData, setTalentData] = useState(null);
   const [exercises, setExercises] = useState([]);
@@ -16,6 +15,7 @@ const TalentPhonemeMaterialExerciseDetail = () => {
   const [error, setError] = useState(null);
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
   const [totalData, setTotalData] = useState(0);
+  const [categoryStats, setCategoryStats] = useState({ avgScore: '0%', attempted: '0/0' });
 
   const decodedPhoneme = decodeURIComponent(phoneme || "");
 
@@ -29,9 +29,29 @@ const TalentPhonemeMaterialExerciseDetail = () => {
         limit: paginationModel.pageSize,
       });
 
+      const wordsData = response.phonemeDetail?.words || [];
       setTalentData(response.talentInfo);
-      setExercises(response.phonemeDetail?.words || []);
+      setExercises(wordsData);
       setTotalData(response.pagination?.totalRecords || 0);
+
+      if (wordsData.length > 0) {
+        let totalScore = 0;
+        let attemptedCount = 0;
+        wordsData.forEach(word => {
+          if (word.latestAttempted !== "N/A") {
+            totalScore += parseFloat(word.bestScore.replace('%', '')) || 0;
+            attemptedCount++;
+          }
+        });
+        const avgScore = attemptedCount > 0 ? totalScore / attemptedCount : 0;
+        setCategoryStats({
+          avgScore: `${Math.round(avgScore)}%`,
+          attempted: `${attemptedCount} attempted`
+        });
+      } else {
+        setCategoryStats({ avgScore: '0%', attempted: '0 attempted' });
+      }
+
     } catch (err) {
       setError(err.message || "Failed to load phoneme material details");
     } finally {
@@ -49,7 +69,7 @@ const TalentPhonemeMaterialExerciseDetail = () => {
     if (value >= 70) return "warning";
     return "error";
   };
-  
+
   const getInitials = (name) => (name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : 'T');
 
   const columns = [
@@ -74,35 +94,55 @@ const TalentPhonemeMaterialExerciseDetail = () => {
         <Link component={RouterLink} to={`/talent/${id}`} underline="hover" color="inherit">{talentData?.nama}</Link>
         <CustomTypography color="text.primary">Phoneme Material Detail</CustomTypography>
       </Breadcrumbs>
-      <Grid container spacing={2} alignItems="center" mb={3}>
-        <Grid item><Avatar sx={{ width: 64, height: 64, bgcolor: "primary.main" }}>{getInitials(talentData?.nama)}</Avatar></Grid>
-        <Grid item xs>
-          <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+
+      <Paper elevation={2} sx={{ p: 2, mb: 3, borderRadius: 3 }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Avatar sx={{ width: 56, height: 56, bgcolor: "primary.main" }}>{getInitials(talentData?.nama)}</Avatar>
             <Box>
               <CustomTypography variant="h6" fontWeight={600}>{talentData?.nama}</CustomTypography>
               <CustomTypography variant="body2" color="text.secondary">{talentData?.email}</CustomTypography>
             </Box>
-            <IconButton onClick={fetchData} disabled={loading} title="Refresh Data"><RefreshIcon /></IconButton>
-          </Box>
-        </Grid>
-      </Grid>
+          </Stack>
+          <IconButton onClick={fetchData} disabled={loading} title="Refresh Data"><RefreshIcon /></IconButton>
+        </Stack>
+      </Paper>
+
       <Paper elevation={1} sx={{ p: 3 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <CustomTypography variant="subtitle1" fontWeight={600}>Phoneme Material Detail: {decodedPhoneme}</CustomTypography>
-          <CustomTypography variant="body2" color="text.secondary">Total Words: {totalData}</CustomTypography>
+        <Box>
+          <Typography variant="h6" fontWeight={600}>Phoneme Material: {decodedPhoneme}</Typography>
+          <Typography variant="body2" color="text.secondary">Detailed performance on individual word pronunciation.</Typography>
         </Box>
+        <Divider sx={{ my: 2 }} />
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid item xs={6} md={4}>
+            <Typography variant="caption" color="text.secondary">Avg. Accuracy (this page)</Typography>
+            <Chip icon={<StarIcon />} label={categoryStats.avgScore} color={getScoreColor(categoryStats.avgScore)} sx={{ fontWeight: 600, mt: 0.5 }} />
+          </Grid>
+          <Grid item xs={6} md={4}>
+            <Typography variant="caption" color="text.secondary">Words Attempted (this page)</Typography>
+            <Typography variant="body1" fontWeight={600}>{categoryStats.attempted}</Typography>
+          </Grid>
+        </Grid>
+
         {loading ? <Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box> :
-         error ? <Alert severity="error" sx={{ mb: 2 }}>{error}<Button onClick={fetchData} size="small" sx={{ ml: 2 }}>Retry</Button></Alert> :
-         <TableComponent
-            rows={exercises.map((ex, i) => ({ id: i, ...ex }))}
-            columns={columns}
-            paginationEnabled
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            rowCount={totalData}
-            loading={loading}
-          />
-        }
+          error ? <Alert severity="error" sx={{ mb: 2 }}>{error}<Button onClick={fetchData} size="small" sx={{ ml: 2 }}>Retry</Button></Alert> :
+            exercises.length === 0 ? (
+              <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" py={8} sx={{ border: '2px dashed', borderColor: 'grey.300', borderRadius: 2, backgroundColor: 'grey.50' }}>
+                <Typography variant="h6" color="text.secondary" gutterBottom>No Activity Yet</Typography>
+                <Typography variant="body2" color="text.secondary">This talent has not practiced any words in the "{decodedPhoneme}" category.</Typography>
+              </Box>
+            ) : (
+              <TableComponent
+                rows={exercises.map((ex, i) => ({ id: i, ...ex }))}
+                columns={columns}
+                paginationEnabled
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                rowCount={totalData}
+                loading={loading}
+              />
+            )}
       </Paper>
     </Box>
   );

@@ -1,4 +1,3 @@
-//src/components/Elements/CustomSearchbar.jsx
 import React from "react";
 import { Box, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";

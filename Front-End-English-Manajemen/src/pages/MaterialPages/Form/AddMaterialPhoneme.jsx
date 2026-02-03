@@ -1,4 +1,3 @@
-// src/pages/MaterialPages/Form/AddMaterialPhoneme.jsx
 import React, { useState } from "react";
 import CustomModal from "../../../components/Elements/CustomModal";
 import CustomInput from "../../../components/Elements/CustomInput";
@@ -114,7 +113,7 @@ const AddMaterialPhoneme = ({ open, onClose, onSubmit }) => {
     { value: "ə", label: "ə - Schwa, as in 'about', 'sofa'" },
     { value: "ɚ", label: "ɚ - as in 'bird', 'first'" },
     { value: "ʌ", label: "ʌ - as in 'but', 'cup'" },
-    { value: "ɑ", label: "ɑ - as in 'father', 'cot'" }, // Termasuk fonem baru
+    { value: "ɑ", label: "ɑ - as in 'father', 'cot'" },
     { value: "ɔ", label: "ɔ - as in 'bought', 'saw'" },
     { value: "ʊ", label: "ʊ - as in 'book', 'put'" },
     { value: "u", label: "u - as in 'boot', 'blue'" },

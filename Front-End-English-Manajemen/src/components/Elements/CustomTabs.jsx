@@ -1,5 +1,3 @@
-//src/components/Elements/CustomTabs.jsx
-import React from "react";
 import { Tabs, Tab, Box, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 

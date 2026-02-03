@@ -1,4 +1,3 @@
-// src/pages/TalentPages/TalentDetailPage.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Box, Avatar, Grid, Breadcrumbs, Link, IconButton, CircularProgress, Alert, Chip, Button, Paper, Typography, Divider, Stack

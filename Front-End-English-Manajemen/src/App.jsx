@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -7,29 +6,19 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
-
-// Auth Context
 import { useAuth } from "./context/AuthContext";
-
-// Layout Components
 import DashboardLayout from "./components/Layout/DashboardLayout";
-
-// Page Components
 import LoginPage from "./pages/LoginPage";
 import DashboardHomePage from "./pages/Home/DashboardHomePage";
 import ViewDetailPage from "./pages/Home/ViewDetail/ViewDetailPage";
 import ProfilePage from "./pages/ProfilePage";
-
-// Talent Pages
 import TalentListPage from "./pages/TalentPages/TalentListPage";
 import TalentDetailPage from "./pages/TalentPages/TalentDetailPage";
 import TalentPronunciationCategoryDetail from "./pages/TalentPages/TalentPronunciationCategoryDetail";
 import TalentPhonemeMaterialExerciseDetail from "./pages/TalentPages/TalentPhonemeMaterialExerciseDetail";
 import TalentPhonemeExamCategoryDetail from "./pages/TalentPages/TalentPhonemeExamCategoryDetail";
 import TalentInterviewDetail from "./pages/TalentPages/TalentInterviewDetail";
-import TalentPhonemeExamAttemptDetail from "./pages/TalentPages/TalentPhonemeExamAttemptDetail"; // ✅ TAMBAH IMPORT INI
-
-// Material Pages
+import TalentPhonemeExamAttemptDetail from "./pages/TalentPages/TalentPhonemeExamAttemptDetail";
 import MaterialPronunciationPage from "./pages/MaterialPages/MaterialPronunciationPage";
 import MaterialConversationPage from "./pages/MaterialPages/MaterialInterviewPage";
 import PhonemeDetailPage from "./pages/MaterialPages/PhonemeDetailPage";
