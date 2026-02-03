@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, Query, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, Query, UploadFile, File, HTTPException, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.services.talent_service import TalentService
 from app.schemas.talent import TalentUpdate, TalentPasswordUpdate
+from app.schemas.auth import TalentCreate
 from app.schemas.response import ResponseBase
 from app.utils.template_generator import TemplateGenerator
 from app.api.deps import get_current_admin_user
@@ -25,6 +26,18 @@ async def get_talent_list(
         "totalPages": (result["total"] + limit - 1) // limit
     }
     return ResponseBase(data={"talents": result["data"], "pagination": pagination}, message="Data talent berhasil diambil")
+
+@router.post("", response_model=ResponseBase, status_code=status.HTTP_201_CREATED)
+async def create_talent(
+    request: TalentCreate, 
+    db: AsyncSession = Depends(get_db)
+):
+    service = TalentService(db)
+    result = await service.create_talent(request)
+    return ResponseBase(
+        message="Talent created successfully", 
+        data={"id": result.idtalent, "email": result.email}
+    )
 
 @router.get("/import-template")
 async def get_talent_template():

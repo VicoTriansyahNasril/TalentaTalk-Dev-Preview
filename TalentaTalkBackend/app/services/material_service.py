@@ -2,6 +2,7 @@ import pandas as pd
 import io
 from app.repositories.material_repository import MaterialRepository
 from app.core.exceptions import AppError, NotFoundError
+from app.utils.time_utils import TimeUtils
 
 class MaterialService:
     def __init__(self, repo: MaterialRepository):
@@ -23,6 +24,70 @@ class MaterialService:
         else:
             if category not in phoneme:
                 raise AppError(status_code=400, detail=f"Phoneme transcription must contain target '{category}'")
+
+    async def get_phoneme_materials_list(self, page: int, limit: int, search: str):
+        skip = (page - 1) * limit
+        items, total = await self.repo.get_phoneme_materials_paginated(skip, limit, search)
+        
+        data = []
+        for item in items:
+            data.append({
+                "phoneme": item[0],
+                "phonemeCategory": item[0],
+                "totalWords": item[1],
+                "lastUpdate": TimeUtils.format_to_wib(item[2])
+            })
+            
+        return {
+            "phonemeMaterials": data,
+            "pagination": {
+                "currentPage": page,
+                "totalRecords": total,
+                "totalPages": (total + limit - 1) // limit
+            }
+        }
+
+    async def get_exercise_materials_list(self, page: int, limit: int, search: str):
+        skip = (page - 1) * limit
+        items, total = await self.repo.get_exercise_materials_paginated(skip, limit, search)
+        
+        data = []
+        for item in items:
+            data.append({
+                "phonemeCategory": item[0],
+                "totalSentence": item[1],
+                "lastUpdate": TimeUtils.format_to_wib(item[2])
+            })
+            
+        return {
+            "exercisePhonemes": data,
+            "pagination": {
+                "currentPage": page,
+                "totalRecords": total,
+                "totalPages": (total + limit - 1) // limit
+            }
+        }
+
+    async def get_exam_materials_list(self, page: int, limit: int, search: str):
+        skip = (page - 1) * limit
+        items, total = await self.repo.get_exam_materials_paginated(skip, limit, search)
+        
+        data = []
+        for item in items:
+            data.append({
+                "phonemeCategory": item[0],
+                "totalExam": item[1],
+                "lastUpdate": TimeUtils.format_to_wib(item[2])
+            })
+            
+        return {
+            "examPhonemes": data,
+            "pagination": {
+                "currentPage": page,
+                "totalRecords": total,
+                "totalPages": (total + limit - 1) // limit
+            }
+        }
 
     async def import_words_from_excel(self, file_content: bytes):
         try:

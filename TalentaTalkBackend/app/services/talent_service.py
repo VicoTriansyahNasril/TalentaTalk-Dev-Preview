@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.talent_repository import TalentRepository
 from app.schemas.talent import TalentUpdate
-from app.core.exceptions import NotFoundError, AppError
+from app.schemas.auth import TalentCreate
+from app.core.exceptions import NotFoundError, AppError, DuplicateError
 from app.utils.time_utils import TimeUtils
 from passlib.context import CryptContext
 import pandas as pd
@@ -40,6 +41,24 @@ class TalentService:
             "highestExam": f"{highest:.0f}%" if stats['highest_exam'] is not None else "N/A",
             "progress": f"{stats['progress']:.0f}%"
         }
+        
+    async def create_talent(self, data: TalentCreate):
+        # 1. Cek Email Duplikat
+        existing = await self.repo.get_by_email(data.email)
+        if existing:
+            raise DuplicateError(f"Email {data.email} sudah terdaftar")
+        
+        # 2. Hash Password
+        hashed_pw = pwd_context.hash(data.password)
+        
+        # 3. Simpan ke DB
+        new_talent_data = {
+            "nama": data.nama,
+            "email": data.email,
+            "password": hashed_pw,
+            "role": data.role
+        }
+        return await self.repo.create(new_talent_data)
 
     async def delete_talent(self, talent_id: int):
         talent = await self.repo.get_by_id(talent_id)

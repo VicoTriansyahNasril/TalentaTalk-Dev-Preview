@@ -1,4 +1,4 @@
-from sqlalchemy import select, func
+from sqlalchemy import select, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from app.models.models import Materipercakapan, Materifonemkata, Materifonemkalimat, Materiujian, Materiujiankalimat, Materiinterview
@@ -22,10 +22,8 @@ class MaterialRepository:
         result = await self.db.execute(query)
         return result.scalar_one_or_none()
 
-    # --- PRETEST & RANDOM FETCHING (MISSING FEATURES RESTORED) ---
+    # --- PRETEST & RANDOM FETCHING ---
     async def get_random_sentences(self, limit: int = 10):
-        """Mengambil kalimat acak dari berbagai kategori untuk Pretest"""
-        # Mengambil kategori unik dulu
         cat_query = select(Materifonemkalimat.kategori).distinct()
         categories = (await self.db.execute(cat_query)).scalars().all()
         
@@ -36,7 +34,6 @@ class MaterialRepository:
             item = (await self.db.execute(q)).scalar_one_or_none()
             if item: results.append(item)
             
-        # Jika masih kurang dari limit (misal kategori sedikit), ambil acak global
         if len(results) < limit:
             needed = limit - len(results)
             exclude_ids = [r.idmaterifonemkalimat for r in results]
@@ -52,7 +49,6 @@ class MaterialRepository:
         return result.scalar_one_or_none()
 
     async def get_random_sentence_by_phoneme(self, phoneme: str):
-        # Cari kategori yang mengandung fonem tersebut
         query = select(Materifonemkalimat).where(Materifonemkalimat.kategori.ilike(f"%{phoneme}%")).order_by(func.random()).limit(1)
         result = await self.db.execute(query)
         return result.scalar_one_or_none()
@@ -62,6 +58,70 @@ class MaterialRepository:
 
     async def get_sentence_by_id(self, id: int):
         return await self.db.get(Materifonemkalimat, id)
+    
+    # 1. Phoneme Material (Words)
+    async def get_phoneme_materials_paginated(self, skip: int, limit: int, search: str = None):
+        # Group by category, count words, get max updated_at
+        stmt = select(
+            Materifonemkata.kategori,
+            func.count(Materifonemkata.idmaterifonemkata).label("total_words"),
+            func.max(Materifonemkata.updated_at).label("last_update")
+        ).group_by(Materifonemkata.kategori)
+        
+        count_stmt = select(func.count(distinct(Materifonemkata.kategori)))
+
+        if search:
+            stmt = stmt.where(Materifonemkata.kategori.ilike(f"%{search}%"))
+            count_stmt = count_stmt.where(Materifonemkata.kategori.ilike(f"%{search}%"))
+            
+        total = await self.db.scalar(count_stmt) or 0
+        
+        stmt = stmt.order_by(Materifonemkata.kategori).offset(skip).limit(limit)
+        result = await self.db.execute(stmt)
+        
+        return result.all(), total
+
+    # 2. Exercise Phoneme (Sentences)
+    async def get_exercise_materials_paginated(self, skip: int, limit: int, search: str = None):
+        stmt = select(
+            Materifonemkalimat.kategori,
+            func.count(Materifonemkalimat.idmaterifonemkalimat).label("total_sentences"),
+            func.max(Materifonemkalimat.updated_at).label("last_update")
+        ).group_by(Materifonemkalimat.kategori)
+        
+        count_stmt = select(func.count(distinct(Materifonemkalimat.kategori)))
+
+        if search:
+            stmt = stmt.where(Materifonemkalimat.kategori.ilike(f"%{search}%"))
+            count_stmt = count_stmt.where(Materifonemkalimat.kategori.ilike(f"%{search}%"))
+            
+        total = await self.db.scalar(count_stmt) or 0
+        
+        stmt = stmt.order_by(Materifonemkalimat.kategori).offset(skip).limit(limit)
+        result = await self.db.execute(stmt)
+        
+        return result.all(), total
+
+    # 3. Exam Phoneme
+    async def get_exam_materials_paginated(self, skip: int, limit: int, search: str = None):
+        stmt = select(
+            Materiujian.kategori,
+            func.count(Materiujian.idmateriujian).label("total_exams"),
+            func.max(Materiujian.updated_at).label("last_update")
+        ).group_by(Materiujian.kategori)
+        
+        count_stmt = select(func.count(distinct(Materiujian.kategori)))
+
+        if search:
+            stmt = stmt.where(Materiujian.kategori.ilike(f"%{search}%"))
+            count_stmt = count_stmt.where(Materiujian.kategori.ilike(f"%{search}%"))
+            
+        total = await self.db.scalar(count_stmt) or 0
+        
+        stmt = stmt.order_by(Materiujian.kategori).offset(skip).limit(limit)
+        result = await self.db.execute(stmt)
+        
+        return result.all(), total
 
     # --- INTERVIEW ---
     async def get_interview_questions(self, skip: int = 0, limit: int = 10):
@@ -194,7 +254,6 @@ class MaterialRepository:
         target = (await self.db.execute(q)).scalar_one_or_none()
         
         if target:
-            # Swap content (since ID is fixed)
             temp_q, temp_s = current.question, current.is_active
             current.question, current.is_active = target.question, target.is_active
             target.question, target.is_active = temp_q, temp_s
