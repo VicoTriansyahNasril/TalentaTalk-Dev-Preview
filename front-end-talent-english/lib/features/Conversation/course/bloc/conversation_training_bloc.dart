@@ -15,13 +15,21 @@ class ConversationTrainingBloc
           ConversationTraining(
             title: 'Profesional Conversation',
             subtitle: 'Simulate professional dialogue with real-time feedback',
-            icon: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 50),
-            route: '/conversation_instruction',
+            icon: const Icon(
+              Icons.chat_bubble_outline,
+              color: Colors.white,
+              size: 50,
+            ),
+            route: '/conversation_topics',
           ),
           ConversationTraining(
             title: 'Interview Practice',
             subtitle: 'Prepare for job interviews with realistic questions',
-            icon: const Icon(Icons.business_center, color: Colors.white, size: 50),
+            icon: const Icon(
+              Icons.business_center,
+              color: Colors.white,
+              size: 50,
+            ),
             route: '/interview_instruction',
           ),
         ];

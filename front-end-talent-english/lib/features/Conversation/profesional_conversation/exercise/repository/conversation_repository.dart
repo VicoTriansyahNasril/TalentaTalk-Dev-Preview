@@ -9,10 +9,9 @@ class ConversationRepository {
 
   Future<String> startConversation() => service.startConversation();
 
-  Future<String> sendMessage(String userInput, String duration) =>
-      service.sendMessage(userInput, duration);
+  Future<String> sendMessage(String userInput, String duration, int topicId) =>
+      service.sendMessage(userInput, duration, topicId);
 
-  // New method for audio transcription
   Future<String> transcribeAudio(String audioPath) =>
       service.transcribeAudio(audioPath);
 
@@ -21,7 +20,6 @@ class ConversationRepository {
       final token = await _getToken();
       final data = await service.fetchReport(token);
 
-      // Handle the actual API response structure
       final reportList =
           (data['report'] as List?)
               ?.map((e) => ReportResult.fromJson(e as Map<String, dynamic>))

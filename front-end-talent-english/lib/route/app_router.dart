@@ -1,77 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front_end_talent/features/Conversation/interview/service/interview_service.dart';
-import 'package:front_end_talent/features/Conversation/profesional_conversation/exercise/service/conversation_service.dart';
+import 'package:go_router/go_router.dart';
+import '../features/Auth/login_screen.dart';
+import '../features/Auth/register_screen.dart';
+import '../features/Auth/bloc/auth_bloc.dart';
+import '../features/Auth/bloc/auth_event.dart';
+import '../features/Auth/repository/auth_repository.dart';
+import '../features/Conversation/profesional_conversation/exercise/conversation_screen.dart';
+import '../features/Conversation/profesional_conversation/exercise/topic_selection_screen.dart';
+import '../features/Conversation/profesional_conversation/exercise/bloc/conversation_bloc.dart';
+import '../features/Conversation/profesional_conversation/exercise/bloc/conversation_event.dart';
+import '../features/Conversation/profesional_conversation/exercise/repository/conversation_repository.dart';
+import '../features/Conversation/profesional_conversation/exercise/service/conversation_service.dart';
+import '../features/Conversation/profesional_conversation/exercise/conversation_instruction.dart';
+import '../features/Conversation/course/conversation_course_screen.dart';
+import '../features/Conversation/interview/interview_screen.dart';
 import '../features/Conversation/interview/bloc/interview_bloc.dart';
 import '../features/Conversation/interview/bloc/interview_event.dart';
-import '../features/Conversation/interview/interview_instruction.dart';
 import '../features/Conversation/interview/repository/interview_repository.dart';
-import '../features/Conversation/profesional_conversation/exercise/conversation_instruction.dart';
+import '../features/Conversation/interview/service/interview_service.dart';
+import '../features/Conversation/interview/interview_instruction.dart';
 import '../features/Exam/exammaterial/exam_material_screen.dart';
 import '../features/Exam/exampronunciation/exam_pronunciation_instruction.dart';
 import '../features/Exam/exampronunciation/exam_pronunciation_screen.dart';
-import 'package:go_router/go_router.dart';
-import '../features/Auth/bloc/auth_event.dart';
 import '../features/Exam/examscore/exam_score_screen.dart';
+import '../features/Exam/examphoneme/exam_phoneme.dart';
+import '../features/Pronunciation/phoneme/phoneme_category_screen.dart';
+import '../features/Pronunciation/sentences/exercise/pronunciation_sentence_instruction.dart';
+import '../features/Pronunciation/sentences/exercise/pronunciation_sentences_screen.dart';
+import '../features/Pronunciation/similiarphoneme/similiar_phoneme.dart';
+import '../features/Pronunciation/words/exercise/pronunciation_words_instruction.dart';
+import '../features/Pronunciation/words/exercise/pronunciation_words_screen.dart';
+import '../features/Pronunciation/course/pronunciation_course_screen.dart';
+import '../features/Pronunciation/sentences/material/material_list_screen.dart';
+import '../features/Pronunciation/words/material/material_list_screen.dart';
 import '../features/History/bloc/history_bloc.dart';
 import '../features/History/history_screen.dart';
 import '../features/History/repository/history_repository.dart';
 import '../features/History/service/history_service.dart';
 import '../features/Onboarding/onboarding_screen.dart';
 import '../features/Pretest/pretest_instruction_screen.dart';
-import '../features/Pronunciation/phoneme/phoneme_category_screen.dart';
-import '../features/Pronunciation/sentences/exercise/pronunciation_sentence_instruction.dart';
-import '../features/Pronunciation/similiarphoneme/similiar_phoneme.dart';
-import '../features/Pronunciation/words/exercise/pronunciation_words_instruction.dart';
+import '../features/Pretest/pretest_pronunciation_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/Course/course_screen.dart';
 import '../features/splash/splash_screen.dart';
 import '../features/navigation/nav_wrapper.dart';
-import '../features/Pronunciation/course/pronunciation_course_screen.dart';
-import '../features/Pretest/pretest_pronunciation_screen.dart';
-import '../features/Conversation/interview/interview_screen.dart';
-import '../features/Pronunciation/sentences/exercise/pronunciation_sentences_screen.dart';
-import '../features/Conversation/profesional_conversation/exercise/conversation_screen.dart';
-import '../features/Conversation/profesional_conversation/exercise/bloc/conversation_bloc.dart';
-import '../features/Conversation/profesional_conversation/exercise/bloc/conversation_event.dart';
-import '../features/Conversation/profesional_conversation/exercise/repository/conversation_repository.dart';
-import '../features/Conversation/course/conversation_course_screen.dart';
-import '../features/Pronunciation/words/exercise/pronunciation_words_screen.dart';
-import '../features/Auth/login_screen.dart';
-import '../features/Auth/bloc/auth_bloc.dart';
-import '../features/Auth/repository/auth_repository.dart';
-import '../features/Pronunciation/sentences/material/material_list_screen.dart';
-import '../features/Pronunciation/words/material/material_list_screen.dart';
 import '../features/Profile/profile_screen.dart';
-import '../features/Exam/examphoneme/exam_phoneme.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-     GoRoute(
-      path: '/',
-      builder: (context, state) => const SplashScreen(),
+    GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+    GoRoute(
+      path: '/login',
+      builder:
+          (context, state) => BlocProvider(
+            create:
+                (_) => AuthBloc(AuthRepository())..add(CheckAuthStatusEvent()),
+            child: const LoginScreen(),
+          ),
     ),
     GoRoute(
-      path: '/conversation',
-      builder: (context, state) => BlocProvider(
-        create: (_) => ConversationBloc(
-          ConversationRepository(service: ConversationService()),
-        )..add(StartConversationEvent()),
-        child: const ConversationScreen(),
-      ),
+      path: '/register',
+      builder:
+          (context, state) => RepositoryProvider(
+            create: (context) => AuthRepository(),
+            child: const RegisterScreen(),
+          ),
     ),
-    
+
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: '/conversation_topics',
+      builder: (context, state) => const TopicSelectionScreen(),
+    ),
+    GoRoute(
+      path: '/conversation/:topicId',
+      builder: (context, state) {
+        final topicId = int.parse(state.pathParameters['topicId']!);
+        return BlocProvider(
+          create:
+              (_) => ConversationBloc(
+                ConversationRepository(service: ConversationService()),
+              )..add(StartConversationEvent(topicId: topicId)),
+          child: const ConversationScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/conversation_instruction',
+      name: 'conversation_instruction',
+      builder: (context, state) => const ConversationInstructionScreen(),
+    ),
     GoRoute(
       path: '/interview',
       builder: (context, state) {
         return BlocProvider(
-          create: (context) => InterviewBloc(
-            repository: InterviewRepository(service:InterviewService()),
-          )..add(StartInterview()),
+          create:
+              (context) => InterviewBloc(
+                repository: InterviewRepository(service: InterviewService()),
+              )..add(StartInterview()),
           child: const InterviewScreen(),
         );
       },
+    ),
+    GoRoute(
+      path: '/interview_instruction',
+      name: 'interview_instruction',
+      builder: (context, state) => const InterviewInstructionScreen(),
     ),
     GoRoute(
       path: '/pretest',
@@ -81,7 +120,8 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/pretest_instruction',
       name: 'pretest_instruction',
-      builder: (context, state) => const PretestPronunciationInstructionScreen(),
+      builder:
+          (context, state) => const PretestPronunciationInstructionScreen(),
     ),
     GoRoute(
       path: '/pronunciation_exam_instruction/:id',
@@ -89,6 +129,23 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final examId = int.parse(state.pathParameters['id']!);
         return ExamPronunciationInstructionScreen(examId: examId);
+      },
+    ),
+    GoRoute(
+      path: '/pronunciation_exam/:id',
+      name: 'pronunciation_exam',
+      builder: (context, state) {
+        final examid = state.pathParameters['id']!;
+        final id = int.parse(examid);
+        return ExamPronunciationScreen(examId: id);
+      },
+    ),
+    GoRoute(
+      path: '/exam_score/:id',
+      name: 'exam_score',
+      builder: (context, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return ExamScoreScreen(examId: id);
       },
     ),
     GoRoute(
@@ -101,43 +158,21 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/pronunciation_words_instruction/:id',
-      name: 'pronunciation_words_instruction',
-      builder: (context, state) {
-        final idString = state.pathParameters['id']!;
-        final id = int.parse(idString);
-        return PronunciationWordsInstructionScreen(materialId: id);
-      },
-    ),
-    GoRoute(
-      path: '/interview_instruction',
-      name: 'interview_instruction',
-      builder: (context, state) => const InterviewInstructionScreen(),
-    ),
-    GoRoute(
-      path: '/conversation_instruction',
-      name: 'conversation_instruction',
-      builder: (context, state) => const ConversationInstructionScreen(),
-    ),
-    
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => BlocProvider(
-        create: (_) => AuthBloc(AuthRepository())..add(CheckAuthStatusEvent()),
-        child: const LoginScreen(),
-      ),
-    ),
-    GoRoute(
-      path: '/onboarding',
-      builder: (context, state) => const OnboardingScreen(),
-    ),
-    GoRoute(
       path: '/pronunciation_sentence/:id',
       name: 'pronunciation_sentence',
       builder: (context, state) {
         final idString = state.pathParameters['id']!;
         final id = int.parse(idString);
         return PronunciationSentencesScreen(idMaterial: id);
+      },
+    ),
+    GoRoute(
+      path: '/pronunciation_words_instruction/:id',
+      name: 'pronunciation_words_instruction',
+      builder: (context, state) {
+        final idString = state.pathParameters['id']!;
+        final id = int.parse(idString);
+        return PronunciationWordsInstructionScreen(materialId: id);
       },
     ),
     GoRoute(
@@ -149,44 +184,27 @@ final GoRouter appRouter = GoRouter(
         return PronunciationWordsScreen(idMaterial: id);
       },
     ),
-    GoRoute(
-      path: '/pronunciation_exam/:id',
-      name: 'pronunciation_exam',
-      builder: (context, state) {
-        final examid = state.pathParameters['id']!;
-        final id = int.parse(examid);
-        return ExamPronunciationScreen(examId: id);
-      },
-    ),
 
     GoRoute(
       path: '/training-history',
       name: 'training_history',
-      builder: (context, state) => BlocProvider(
-        create: (context) => TrainingHistoryBloc(
-          repository: TrainingHistoryRepository(
-            service: TrainingHistoryService(),
+      builder:
+          (context, state) => BlocProvider(
+            create:
+                (context) => TrainingHistoryBloc(
+                  repository: TrainingHistoryRepository(
+                    service: TrainingHistoryService(),
+                  ),
+                ),
+            child: const TrainingHistoryScreen(),
           ),
-        ),
-        child: TrainingHistoryScreen(),
-      ),
-    ),
-    GoRoute(
-      path: '/exam_score/:id',
-      name: 'exam_score',
-      builder: (context, state) {
-        final id = int.parse(state.pathParameters['id']!);
-        return ExamScoreScreen(examId: id);
-      },
     ),
 
-    
     ShellRoute(
       builder: (context, state, child) {
-        
         int index = 0;
         final currentLocation = state.matchedLocation;
-        
+
         final coursePaths = [
           '/course',
           '/pronunciation-training',
@@ -196,9 +214,9 @@ final GoRouter appRouter = GoRouter(
           '/exam-phoneme',
           '/materials',
           '/material_words',
-          '/exam_material'
+          '/exam_material',
         ];
-        
+
         if (currentLocation == '/home') {
           index = 0;
         } else if (coursePaths.contains(currentLocation)) {
@@ -206,14 +224,11 @@ final GoRouter appRouter = GoRouter(
         } else if (currentLocation == '/profile') {
           index = 2;
         }
-        
+
         return NavWrapper(currentIndex: index, child: child);
       },
       routes: [
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomeScreen(),
-        ),
+        GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
         GoRoute(
           path: '/course',
           builder: (context, state) => const CourseScreen(),
@@ -249,21 +264,21 @@ final GoRouter appRouter = GoRouter(
             final phonemes = state.uri.queryParameters['phonemes'];
             final phoneme1 = state.uri.queryParameters['phoneme1'];
             final phoneme2 = state.uri.queryParameters['phoneme2'];
-            
+
             List<String> phonemeList = [];
-            
+
             if (phonemes != null && phonemes.isNotEmpty) {
               phonemeList = phonemes.split(',').map((p) => p.trim()).toList();
             } else if (phoneme1 != null && phoneme2 != null) {
               phonemeList = [phoneme1, phoneme2];
             }
-            
+
             if (phonemeList.isEmpty) {
               return const Scaffold(
                 body: Center(child: Text('No phonemes specified')),
               );
             }
-            
+
             return MaterialListScreen(phonemes: phonemeList);
           },
         ),
@@ -280,27 +295,18 @@ final GoRouter appRouter = GoRouter(
           name: 'exam_material',
           builder: (context, state) {
             final phonemes = state.uri.queryParameters['phonemes'];
-            final phoneme1 = state.uri.queryParameters['phoneme1'];
-            final phoneme2 = state.uri.queryParameters['phoneme2'];
-            
             List<String> phonemeList = [];
-            
             if (phonemes != null && phonemes.isNotEmpty) {
               phonemeList = phonemes.split(',').map((p) => p.trim()).toList();
-            } else if (phoneme1 != null && phoneme2 != null) {
-              phonemeList = [phoneme1, phoneme2];
             }
-            
             if (phonemeList.isEmpty) {
               return const Scaffold(
                 body: Center(child: Text('No phonemes specified for exam')),
               );
             }
-            
             return ExamMaterialScreen(phonemes: phonemeList);
           },
         ),
-
       ],
     ),
   ],

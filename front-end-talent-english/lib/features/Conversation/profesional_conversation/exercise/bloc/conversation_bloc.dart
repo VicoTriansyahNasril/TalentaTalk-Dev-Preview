@@ -1,4 +1,3 @@
-// conversation_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:io';
 import 'dart:developer' as dev;
@@ -10,14 +9,21 @@ import 'conversation_state.dart';
 class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
   final ConversationRepository repository;
   final List<ChatMessage> _messages = [];
+  int _currentTopicId = 1;
 
   ConversationBloc(this.repository) : super(ConversationInitial()) {
     on<StartConversationEvent>((event, emit) async {
+      _currentTopicId = event.topicId;
       emit(ConversationLoading());
       try {
-        final topic = await repository.startConversation();
+        await repository.startConversation();
         _messages.clear();
-        _messages.add(ChatMessage(message: topic, isUser: false));
+        _messages.add(
+          ChatMessage(
+            message: "Topic selected. You can start speaking now.",
+            isUser: false,
+          ),
+        );
         emit(ConversationInProgress(List.from(_messages)));
       } catch (e) {
         emit(ConversationError(e.toString()));
@@ -31,6 +37,7 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
         final reply = await repository.sendMessage(
           event.message,
           event.duration,
+          _currentTopicId,
         );
         _messages.add(ChatMessage(message: reply, isUser: false));
         emit(ConversationInProgress(List.from(_messages)));
@@ -42,11 +49,9 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     on<SendAudioMessageEvent>((event, emit) async {
       try {
         dev.log('Processing audio message: ${event.audioPath}');
-
         final audioFile = File(event.audioPath);
-
         if (!audioFile.existsSync()) {
-          throw Exception('Audio file not found: ${event.audioPath}');
+          throw Exception('Audio file not found at: ${event.audioPath}');
         }
 
         final fileSize = await audioFile.length();
@@ -72,12 +77,12 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
         final reply = await repository.sendMessage(
           transcribedText,
           event.duration,
+          _currentTopicId,
         );
         _messages.add(ChatMessage(message: reply, isUser: false));
         emit(ConversationInProgress(List.from(_messages)));
 
         dev.log('Conversation exchange completed successfully');
-        dev.log('Recording file kept at: ${event.audioPath}');
       } catch (e) {
         dev.log('Error in SendAudioMessageEvent: $e');
 
@@ -88,9 +93,7 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
           ),
         );
         emit(ConversationInProgress(List.from(_messages)));
-
         emit(ConversationError('Failed to process audio: ${e.toString()}'));
-
         await Future.delayed(const Duration(seconds: 2));
         emit(ConversationInProgress(List.from(_messages)));
       }
