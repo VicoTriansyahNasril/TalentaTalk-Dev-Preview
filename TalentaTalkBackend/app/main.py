@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.core.exceptions import AppError
 from app.core.database import engine, Base
+from app.seeder import seed_admins
 from app.api.v1.endpoints import (
     auth, conversation, phoneme, dashboard, material, 
     talents, history, exam, transcribe, interview_flow, mobile_profile, pretest
@@ -15,6 +16,12 @@ from app.api.v1.endpoints import (
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    try:
+        print("🌱 Running Auto-Seeder...")
+        await seed_admins()
+    except Exception as e:
+        print(f"⚠️ Seeder Warning: {e}")
+        
     yield
 
 app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
