@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } else if (state is AuthAuthenticated) {
             context.go('/home');
           } else if (state is AuthOnboardingRequired) {
-            context.go('/onboarding'); 
+            context.go('/onboarding');
           }
         },
         builder: (context, state) {
@@ -136,11 +136,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey.shade300),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade300,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                                borderSide: BorderSide(
+                                  color: Colors.blue.shade400,
+                                  width: 2,
+                                ),
                               ),
                             ),
                             keyboardType: TextInputType.emailAddress,
@@ -148,7 +153,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email';
                               }
-                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                              if (!RegExp(
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                              ).hasMatch(value)) {
                                 return 'Please enter a valid email';
                               }
                               return null;
@@ -164,7 +171,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               prefixIcon: const Icon(Icons.lock_outline),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -177,11 +186,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.grey.shade300),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade300,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: Colors.blue.shade400, width: 2),
+                                borderSide: BorderSide(
+                                  color: Colors.blue.shade400,
+                                  width: 2,
+                                ),
                               ),
                             ),
                             validator: (value) {
@@ -194,40 +208,25 @@ class _LoginScreenState extends State<LoginScreen> {
                               return null;
                             },
                           ),
-                          // const SizedBox(height: 12),
-                          // // Forgot Password
-                          // Align(
-                          //   alignment: Alignment.centerRight,
-                          //   child: TextButton(
-                          //     onPressed: () {
-                          //       // Handle forgot password
-                          //     },
-                          //     child: Text(
-                          //       'Forgot Password?',
-                          //       style: TextStyle(
-                          //         color: Colors.blue.shade700,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                           const SizedBox(height: 24),
-                          // Login Button
                           SizedBox(
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                              onPressed: state is AuthLoading
-                                  ? null
-                                  : () {
-                                      if (_formKey.currentState!.validate()) {
-                                        context.read<AuthBloc>().add(
-                                              LoginEvent(
-                                                email: _emailController.text,
-                                                password: _passwordController.text,
-                                              ),
-                                            );
-                                      }
-                                    },
+                              onPressed:
+                                  state is AuthLoading
+                                      ? null
+                                      : () {
+                                        if (_formKey.currentState!.validate()) {
+                                          context.read<AuthBloc>().add(
+                                            LoginEvent(
+                                              email: _emailController.text,
+                                              password:
+                                                  _passwordController.text,
+                                            ),
+                                          );
+                                        }
+                                      },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blue.shade600,
                                 foregroundColor: Colors.white,
@@ -236,25 +235,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 elevation: 0,
                               ),
-                              child: state is AuthLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
+                              child:
+                                  state is AuthLoading
+                                      ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                      : const Text(
+                                        'Login',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    )
-                                  : const Text(
-                                      'Login',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                             ),
                           ),
                           const SizedBox(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Don't have an account?"),
+                              TextButton(
+                                onPressed: () {
+                                  context.push(
+                                    '/register',
+                                  );
+                                },
+                                child: const Text('Sign Up'),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),

@@ -1,17 +1,23 @@
-# Python / Backend
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 .venv/
 venv/
 env/
-*.log
-.env
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# Environment Variables
+.env
+.env.local
+.env.*
 
 # IDE
 .vscode/
 .idea/
+
+# Database
+*.sqlite3
+*.db
+
+# Logs
+*.log
