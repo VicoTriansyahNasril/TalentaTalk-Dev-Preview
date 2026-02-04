@@ -1,9 +1,18 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+class Topic(BaseModel):
+    id: int
+    title: str
+    description: str
+
+class TopicListResponse(BaseModel):
+    topics: List[Topic]
+
 class ChatInput(BaseModel):
     user_input: str
     duration: str
+    topic_id: Optional[int] = 1 
 
 class ChatResponse(BaseModel):
     response: str

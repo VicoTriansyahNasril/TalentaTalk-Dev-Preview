@@ -11,28 +11,33 @@ class ConversationService:
         self.material_repo = MaterialRepository(db)
         self.score_repo = ScoreRepository(db)
 
+    # Hardcoded Topics
+    HARDCODED_TOPICS = [
+        {"id": 1, "title": "Technology Trends", "description": "Discussing AI, Blockchain, and future tech."},
+        {"id": 2, "title": "Job Interview", "description": "General job interview preparation."},
+        {"id": 3, "title": "Daily Routine", "description": "Talk about hobbies, work, and daily life."},
+        {"id": 4, "title": "Travel & Culture", "description": "Discussing vacation spots and cultural differences."},
+        {"id": 5, "title": "Business Meeting", "description": "Simulate a formal business meeting environment."},
+    ]
+
+    async def get_topics(self):
+        return self.HARDCODED_TOPICS
+
     async def start_session(self):
-        topic_obj = await self.material_repo.get_random_topic()
-        topic = topic_obj.topic if topic_obj else "General Technology"
-        topic_id = topic_obj.idmateripercakapan if topic_obj else None
-        
-        prompt = f"Generate a unique conversation starter about: '{topic}'. Return ONLY the question."
-        question = await LLMService.generate(prompt)
-        
-        return {"topic": topic, "topic_id": topic_id, "message": question}
+        return {"topic": "Select a topic", "message": "Please select a topic to begin."}
 
     async def process_chat(self, user_input: str, duration: str, talent_id: int, topic_id: int = 1):
-        """Memproses chat, hitung score, dan SIMPAN ke DB"""
-        
-        # 1. WPM Logic (from helper)
+        selected_topic = next((t for t in self.HARDCODED_TOPICS if t["id"] == topic_id), self.HARDCODED_TOPICS[0])
+        topic_name = selected_topic["title"]
+
         from app.utils.calculation_utils import CalculationHelper
         wpm = CalculationHelper.calculate_wpm(user_input, duration)
         confidence = min(100, max(0, int(wpm)))
         
-        # 2. AI Processing
         prompt = f"""
+        Context: Professional Conversation about '{topic_name}'.
         User said: "{user_input}"
-        Task: Check grammar & Respond.
+        Task: Check grammar & Respond naturally relevant to the topic.
         Return JSON: {{ "grammar_check": "...", "response": "..." }}
         """
         ai_raw = await LLMService.generate(prompt)
@@ -49,10 +54,9 @@ class ConversationService:
         except:
             pass
 
-        # 3. SAVE TO DB
         await self.score_repo.save_chat_result(
             talent_id=talent_id,
-            topic_id=topic_id,
+            topic_id=1, 
             wpm=wpm,
             grammar=grammar_text[:255]
         )
