@@ -40,7 +40,9 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://127.0.0.1:8000",
         "http://127.0.0.1:3000",
-        "http://localhost:8000"
+        "http://localhost:8000",
+        "https://talentatalk-admin.vercel.app", 
+        "https://talentatalk-admin-git-main-cozs-projects-51dd16eb.vercel.app"
     ]
 
     # PHONETIC CONSTANTS (Static Logic)
