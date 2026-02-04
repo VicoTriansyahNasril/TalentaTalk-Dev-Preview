@@ -1,11 +1,11 @@
 import asyncio
 import logging
 from passlib.context import CryptContext
-from sqlalchemy import delete
+from sqlalchemy import select, delete
 from app.core.database import AsyncSessionLocal, engine, Base
 from app.models.models import Manajemen
 
-# Logging
+# Logging config
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
-# Data Admin
+# Data Admin Default
 ADMIN_DATA = [
     {
         "namamanajemen": "Admin",
@@ -24,38 +24,34 @@ ADMIN_DATA = [
     }
 ]
 
-async def init_tables():
-    logger.info("🛠️  Memeriksa dan membuat tabel database...")
+async def seed_admins():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    logger.info("✅ Tabel siap.")
-
-async def seed_admins():
-    await init_tables()
-    logger.info("🌱 Memulai clean seeding data Admin...")
 
     async with AsyncSessionLocal() as session:
         try:
-            # 1. HAPUS SEMUA DATA LAMA
-            logger.warning("🧹 Menghapus seluruh data Manajemen...")
-            await session.execute(delete(Manajemen))
-            await session.commit()
+            result = await session.execute(select(Manajemen).where(Manajemen.email == ADMIN_DATA[0]["email"]))
+            existing_admin = result.scalar_one_or_none()
 
-            # 2. INSERT DATA BARU
-            for data in ADMIN_DATA:
-                admin = Manajemen(
-                    namamanajemen=data["namamanajemen"],
-                    email=data["email"],
-                    password=get_password_hash(data["password"])
+            if not existing_admin:
+                logger.info("🌱 Seeding Admin Baru...")
+                new_admin = Manajemen(
+                    namamanajemen=ADMIN_DATA[0]["namamanajemen"],
+                    email=ADMIN_DATA[0]["email"],
+                    password=get_password_hash(ADMIN_DATA[0]["password"])
                 )
-                session.add(admin)
-
-            await session.commit()
-            logger.info("🎉 Clean seeding Admin berhasil!")
+                session.add(new_admin)
+                await session.commit()
+                logger.info("✅ Admin berhasil dibuat: admin@gmail.com / admin123")
+            else:
+                logger.info("🔄 Admin ditemukan, mereset password ke default...")
+                existing_admin.password = get_password_hash(ADMIN_DATA[0]["password"])
+                await session.commit()
+                logger.info("✅ Password Admin di-reset: admin123")
 
         except Exception as e:
             await session.rollback()
-            logger.error(f"❌ Seeder gagal: {e}")
+            logger.error(f"❌ Seeder Error: {e}")
         finally:
             await session.close()
 

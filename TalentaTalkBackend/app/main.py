@@ -9,7 +9,8 @@ from app.core.database import engine, Base
 from app.seeder import seed_admins
 from app.api.v1.endpoints import (
     auth, conversation, phoneme, dashboard, material, 
-    talents, history, exam, transcribe, interview_flow, mobile_profile, pretest
+    talents, history, exam, transcribe, interview_flow, 
+    mobile_profile, pretest, home
 )
 
 @asynccontextmanager
@@ -17,10 +18,9 @@ async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     try:
-        print("🌱 Running Auto-Seeder...")
         await seed_admins()
     except Exception as e:
-        print(f"⚠️ Seeder Warning: {e}")
+        print(f"Startup Seeder Error: {e}")
         
     yield
 
@@ -41,23 +41,26 @@ async def app_exception_handler(request: Request, exc: AppError):
         content={"success": False, "message": str(exc.detail), "data": None},
     )
 
-# --- WEB ADMIN ---
+api_v1 = settings.API_V1_STR
+
+# Admin Routes
 app.include_router(auth.router, prefix="/web/admin", tags=["Auth Admin"])
 app.include_router(dashboard.router, prefix="/web/admin", tags=["Dashboard"])
 app.include_router(material.router, prefix="/web/admin", tags=["Material"])
 app.include_router(talents.router, prefix="/web/admin/talents", tags=["Talent Management"])
 
-# --- MOBILE APP ---
-app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth Mobile"])
-app.include_router(conversation.router, prefix="/api/v1/conversation", tags=["Conversation"])
-app.include_router(interview_flow.router, prefix="/api/v1/interview", tags=["Interview"])
-app.include_router(phoneme.router, prefix="/api/v1/phoneme", tags=["Phoneme"])
-app.include_router(history.router, prefix="/api/v1/history", tags=["History"])
-app.include_router(exam.router, prefix="/api/v1/exam", tags=["Exam"])
-app.include_router(transcribe.router, prefix="/api/v1", tags=["Transcribe"])
-app.include_router(mobile_profile.router, prefix="/api/v1/profile", tags=["Profile Mobile"])
-app.include_router(pretest.router, prefix="/api/v1/pretest", tags=["Pretest"])
+# Mobile Routes
+app.include_router(auth.router, prefix=f"{api_v1}/auth", tags=["Auth Mobile"])
+app.include_router(home.router, prefix=f"{api_v1}/home", tags=["Home"])
+app.include_router(conversation.router, prefix=f"{api_v1}/conversation", tags=["Conversation"])
+app.include_router(interview_flow.router, prefix=f"{api_v1}/interview", tags=["Interview"])
+app.include_router(phoneme.router, prefix=f"{api_v1}/phoneme", tags=["Phoneme"])
+app.include_router(history.router, prefix=f"{api_v1}/history", tags=["History"])
+app.include_router(exam.router, prefix=f"{api_v1}/exam", tags=["Exam"])
+app.include_router(transcribe.router, prefix=api_v1, tags=["Transcribe"])
+app.include_router(mobile_profile.router, prefix=f"{api_v1}/profile", tags=["Profile Mobile"])
+app.include_router(pretest.router, prefix=f"{api_v1}/pretest", tags=["Pretest"])
 
 @app.get("/")
 def root():
-    return {"message": "TalentaTalk API v1.6 Running"}
+    return {"message": "TalentaTalk API v1.9 (Bcrypt Fix) Running"}
