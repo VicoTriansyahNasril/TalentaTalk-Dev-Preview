@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:developer' as dev;
 import 'dart:io';
 
 import 'bloc/interview_bloc.dart';
@@ -31,14 +32,12 @@ class _InterviewScreenState extends State<InterviewScreen> {
   final TranscriptionService _transcriptionService = TranscriptionService();
   bool _isRecording = false;
   String _recordingPath = '';
-  late DateTime _interviewStartTime;
   DateTime? _recordingStartTime;
   bool _isProcessing = false;
 
   @override
   void initState() {
     super.initState();
-    _interviewStartTime = DateTime.now();
     context.read<InterviewBloc>().add(StartInterview());
     _requestPermissions();
     _initializePersistentPath();
@@ -53,12 +52,13 @@ class _InterviewScreenState extends State<InterviewScreen> {
   Future<void> _initializePersistentPath() async {
     final directory = await getApplicationDocumentsDirectory();
     _recordingPath = '${directory.path}/transcribe.m4a';
-    print('Persistent recording path initialized: $_recordingPath');
+    dev.log('Persistent recording path initialized: $_recordingPath');
   }
 
   Future<void> _requestPermissions() async {
     final status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Microphone permission is required for recording'),
@@ -73,7 +73,7 @@ class _InterviewScreenState extends State<InterviewScreen> {
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    
+
     if (duration.inHours > 0) {
       return '$hours:$minutes:$seconds';
     } else {
@@ -85,6 +85,7 @@ class _InterviewScreenState extends State<InterviewScreen> {
     try {
       final hasPermission = await _audioRecorder.hasPermission();
       if (!hasPermission) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Microphone permission denied'),
@@ -101,7 +102,7 @@ class _InterviewScreenState extends State<InterviewScreen> {
       final existingFile = File(_recordingPath);
       if (existingFile.existsSync()) {
         await existingFile.delete();
-        print('Previous transcribe.m4a file deleted');
+        dev.log('Previous transcribe.m4a file deleted');
       }
 
       const config = RecordConfig(
@@ -117,10 +118,11 @@ class _InterviewScreenState extends State<InterviewScreen> {
         _recordingStartTime = DateTime.now();
       });
 
-      print('Recording started: $_recordingPath');
-      print('Recording start time: $_recordingStartTime');
+      dev.log('Recording started: $_recordingPath');
+      dev.log('Recording start time: $_recordingStartTime');
     } catch (e) {
-      print('Error starting recording: $e');
+      dev.log('Error starting recording: $e');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to start recording: $e'),
@@ -134,33 +136,34 @@ class _InterviewScreenState extends State<InterviewScreen> {
     try {
       final path = await _audioRecorder.stop();
       final recordingEndTime = DateTime.now();
-      
+
       setState(() {
         _isRecording = false;
         _isProcessing = true;
       });
 
-      print('Recording stopped. Path from stop(): $path');
-      print('Recording path variable: $_recordingPath');
-      print('Recording end time: $recordingEndTime');
+      dev.log('Recording stopped. Path from stop(): $path');
+      dev.log('Recording path variable: $_recordingPath');
+      dev.log('Recording end time: $recordingEndTime');
 
       final finalPath = path ?? _recordingPath;
-      
+
       if (finalPath.isNotEmpty && _recordingStartTime != null) {
         final file = File(finalPath);
-        print('File exists: ${file.existsSync()}');
-        print('File path: ${file.path}');
-        
+        dev.log('File exists: ${file.existsSync()}');
+        dev.log('File path: ${file.path}');
+
         if (file.existsSync()) {
           await Future.delayed(const Duration(milliseconds: 100));
-          
-          // Hitung durasi recording yang sebenarnya
-          final recordingDuration = recordingEndTime.difference(_recordingStartTime!);
+
+          final recordingDuration = recordingEndTime.difference(
+            _recordingStartTime!,
+          );
           final formattedDuration = _formatDuration(recordingDuration);
-          
-          print('Actual recording duration: $formattedDuration');
-          print('Audio file will be kept at: ${file.path}');
-          
+
+          dev.log('Actual recording duration: $formattedDuration');
+          dev.log('Audio file will be kept at: ${file.path}');
+
           await _transcribeAndSend(finalPath, formattedDuration);
         } else {
           throw Exception('Recording file not found at: $finalPath');
@@ -169,11 +172,12 @@ class _InterviewScreenState extends State<InterviewScreen> {
         throw Exception('Recording path is empty or start time not recorded');
       }
     } catch (e) {
-      print('Error stopping recording: $e');
+      dev.log('Error stopping recording: $e');
       setState(() {
         _isRecording = false;
         _isProcessing = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to stop recording: $e'),
@@ -183,33 +187,40 @@ class _InterviewScreenState extends State<InterviewScreen> {
     }
   }
 
-  Future<void> _transcribeAndSend(String audioPath, String recordingDuration) async {
+  Future<void> _transcribeAndSend(
+    String audioPath,
+    String recordingDuration,
+  ) async {
     try {
-      print('Transcribing audio from: $audioPath');
-      print('Recording duration: $recordingDuration');
-      
+      dev.log('Transcribing audio from: $audioPath');
+      dev.log('Recording duration: $recordingDuration');
+
       final file = File(audioPath);
       if (!file.existsSync()) {
         throw Exception('Audio file not found at: $audioPath');
       }
 
       final fileSize = await file.length();
-      print('Audio file size: $fileSize bytes');
+      dev.log('Audio file size: $fileSize bytes');
 
       if (fileSize == 0) {
         throw Exception('Audio file is empty');
       }
 
-      final transcribedText = await _transcriptionService.transcribeAudio(audioPath);
-      
+      final transcribedText = await _transcriptionService.transcribeAudio(
+        audioPath,
+      );
+
       if (transcribedText != null && transcribedText.isNotEmpty) {
-        print('Transcribed text: $transcribedText');
-        
+        dev.log('Transcribed text: $transcribedText');
+
+        if (!mounted) return;
         context.read<InterviewBloc>().add(
           SendMessage(transcribedText, duration: recordingDuration),
         );
       } else {
-        print('No transcription received');
+        dev.log('No transcription received');
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('No speech detected'),
@@ -218,18 +229,19 @@ class _InterviewScreenState extends State<InterviewScreen> {
         );
       }
 
-      print('Audio file preserved at: $audioPath');
+      dev.log('Audio file preserved at: $audioPath');
 
       setState(() {
         _isProcessing = false;
         _recordingStartTime = null;
       });
     } catch (e) {
-      print('Error in transcribeAndSend: $e');
+      dev.log('Error in transcribeAndSend: $e');
       setState(() {
         _isProcessing = false;
         _recordingStartTime = null;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to process audio: $e'),
@@ -243,46 +255,46 @@ class _InterviewScreenState extends State<InterviewScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Row(
-          children: [
-            Icon(Icons.refresh, color: Colors.green.shade600),
-            const SizedBox(width: 8),
-            const Text('Start New Interview?'),
-          ],
-        ),
-        content: const Text(
-          'This will start a new interview session. Your current progress will be cleared.',
-          style: TextStyle(fontSize: 15),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.grey.shade600),
+      builder:
+          (_) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _interviewStartTime = DateTime.now();
-              context.read<InterviewBloc>().add(StartInterview());
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green.shade600,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+            title: Row(
+              children: [
+                Icon(Icons.refresh, color: Colors.green.shade600),
+                const SizedBox(width: 8),
+                const Text('Start New Interview?'),
+              ],
+            ),
+            content: const Text(
+              'This will start a new interview session. Your current progress will be cleared.',
+              style: TextStyle(fontSize: 15),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
               ),
-            ),
-            child: const Text('Start New'),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  context.read<InterviewBloc>().add(StartInterview());
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade600,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text('Start New'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -296,22 +308,22 @@ class _InterviewScreenState extends State<InterviewScreen> {
           maxWidth: MediaQuery.of(context).size.width * 0.8,
         ),
         decoration: BoxDecoration(
-          color: message.isUser 
-              ? Colors.blue.shade600 
-              : Colors.grey.shade100,
+          color: message.isUser ? Colors.blue.shade600 : Colors.grey.shade100,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
-            bottomLeft: message.isUser 
-                ? const Radius.circular(16) 
-                : const Radius.circular(4),
-            bottomRight: message.isUser 
-                ? const Radius.circular(4) 
-                : const Radius.circular(16),
+            bottomLeft:
+                message.isUser
+                    ? const Radius.circular(16)
+                    : const Radius.circular(4),
+            bottomRight:
+                message.isUser
+                    ? const Radius.circular(4)
+                    : const Radius.circular(16),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -345,7 +357,7 @@ class _InterviewScreenState extends State<InterviewScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -410,16 +422,15 @@ class _InterviewScreenState extends State<InterviewScreen> {
                 ),
                 Text(
                   'Tap the microphone to stop recording',
-                  style: TextStyle(
-                    color: Colors.red.shade600,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.red.shade600, fontSize: 12),
                 ),
                 if (_recordingStartTime != null)
                   StreamBuilder(
                     stream: Stream.periodic(const Duration(seconds: 1)),
                     builder: (context, snapshot) {
-                      final duration = DateTime.now().difference(_recordingStartTime!);
+                      final duration = DateTime.now().difference(
+                        _recordingStartTime!,
+                      );
                       return Text(
                         'Duration: ${_formatDuration(duration)}',
                         style: TextStyle(
@@ -479,23 +490,21 @@ class _InterviewScreenState extends State<InterviewScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            _isRecording 
-                ? "Recording... (tap to stop)" 
+            _isRecording
+                ? "Recording... (tap to stop)"
                 : _isProcessing
-                    ? "Processing audio..."
-                    : "Tap the microphone to record",
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-            ),
+                ? "Processing audio..."
+                : "Tap the microphone to record",
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           GestureDetector(
-            onTap: _isProcessing 
-                ? null 
-                : _isRecording 
-                    ? _stopRecording 
+            onTap:
+                _isProcessing
+                    ? null
+                    : _isRecording
+                    ? _stopRecording
                     : _startRecording,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
@@ -503,36 +512,39 @@ class _InterviewScreenState extends State<InterviewScreen> {
               height: 72,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _isProcessing
-                    ? Colors.orange.shade600
-                    : _isRecording 
-                        ? Colors.red.shade600 
+                color:
+                    _isProcessing
+                        ? Colors.orange.shade600
+                        : _isRecording
+                        ? Colors.red.shade600
                         : Colors.blue.shade600,
                 boxShadow: [
                   BoxShadow(
-                    color: (_isProcessing 
-                        ? Colors.orange
-                        : _isRecording 
-                            ? Colors.red 
-                            : Colors.blue).withOpacity(0.3),
+                    color: (_isProcessing
+                            ? Colors.orange
+                            : _isRecording
+                            ? Colors.red
+                            : Colors.blue)
+                        .withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
-              child: _isProcessing
-                  ? const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: CircularProgressIndicator(
+              child:
+                  _isProcessing
+                      ? const Padding(
+                        padding: EdgeInsets.all(20),
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 3,
+                        ),
+                      )
+                      : Icon(
+                        _isRecording ? Icons.stop : Icons.mic,
                         color: Colors.white,
-                        strokeWidth: 3,
+                        size: 32,
                       ),
-                    )
-                  : Icon(
-                      _isRecording ? Icons.stop : Icons.mic,
-                      color: Colors.white,
-                      size: 32,
-                    ),
             ),
           ),
         ],
@@ -551,10 +563,7 @@ class _InterviewScreenState extends State<InterviewScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Colors.blue.shade50,
-            Colors.white,
-          ],
+          colors: [Colors.blue.shade50, Colors.white],
         ),
       ),
       child: SingleChildScrollView(
@@ -564,10 +573,7 @@ class _InterviewScreenState extends State<InterviewScreen> {
             const SummaryHeaderCard(),
             const SizedBox(height: 24),
 
-            AnimatedCard(
-              delay: 200,
-              child: StatisticsCard(stats: stats),
-            ),
+            AnimatedCard(delay: 200, child: StatisticsCard(stats: stats)),
             const SizedBox(height: 20),
 
             AnimatedCard(
@@ -584,15 +590,15 @@ class _InterviewScreenState extends State<InterviewScreen> {
 
             AnimatedCard(
               delay: 800,
-              child: OverallPerformanceCard(overallPerformance: overallPerformance),
+              child: OverallPerformanceCard(
+                overallPerformance: overallPerformance,
+              ),
             ),
             const SizedBox(height: 30),
 
             AnimatedCard(
               delay: 1000,
-              child: BackButtonCard(
-                onPressed: () => Navigator.pop(context),
-              ),
+              child: BackButtonCard(onPressed: () => Navigator.pop(context)),
             ),
           ],
         ),
@@ -620,8 +626,6 @@ class _InterviewScreenState extends State<InterviewScreen> {
                   onPressed: _handleRestartInterview,
                   tooltip: 'Start New Interview',
                 );
-              } else if (!state.interviewCompleted) {
-
               }
               return const SizedBox.shrink();
             },
@@ -630,23 +634,24 @@ class _InterviewScreenState extends State<InterviewScreen> {
       ),
       body: BlocBuilder<InterviewBloc, InterviewState>(
         builder: (context, state) {
-          print("📊 Summary state: ${state.summary != null}");
-          
-          if (state.isLoading && state.summary == null && state.interviewCompleted) {
+          dev.log("📊 Summary state: ${state.summary != null}");
+
+          if (state.isLoading &&
+              state.summary == null &&
+              state.interviewCompleted) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade600),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.blue.shade600,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Generating interview summary...',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
                   ),
                 ],
               ),
@@ -657,57 +662,60 @@ class _InterviewScreenState extends State<InterviewScreen> {
             return Column(
               children: [
                 Expanded(
-                  child: state.messages.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                  child:
+                      state.messages.isEmpty
+                          ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.chat_bubble_outline,
+                                  size: 64,
+                                  color: Colors.grey.shade400,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Start your interview',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Tap the microphone below to begin recording',
+                                  style: TextStyle(color: Colors.grey.shade500),
+                                ),
+                              ],
+                            ),
+                          )
+                          : Column(
                             children: [
-                              Icon(
-                                Icons.chat_bubble_outline,
-                                size: 64,
-                                color: Colors.grey.shade400,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Start your interview',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.grey.shade600,
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: state.messages.length,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return _buildChatBubble(
+                                      state.messages[index],
+                                    );
+                                  },
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Tap the microphone below to begin recording',
-                                style: TextStyle(
-                                  color: Colors.grey.shade500,
+                              if (state.isLoading && !state.interviewCompleted)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: _buildAiTypingIndicator(),
                                 ),
-                              ),
                             ],
                           ),
-                        )
-                      : Column(
-                          children: [
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: state.messages.length,
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                itemBuilder: (context, index) {
-                                  return _buildChatBubble(state.messages[index]);
-                                },
-                              ),
-                            ),
-                            if (state.isLoading && !state.interviewCompleted)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: _buildAiTypingIndicator(),
-                              ),
-                          ],
-                        ),
                 ),
-                
+
                 if (_isRecording) _buildRecordingIndicator(),
                 if (_isProcessing) _buildProcessingIndicator(),
-                
+
                 if (state.interviewCompleted && state.summary == null)
                   Container(
                     margin: const EdgeInsets.all(16),
@@ -716,7 +724,10 @@ class _InterviewScreenState extends State<InterviewScreen> {
                       icon: const Icon(Icons.arrow_forward),
                       label: const Text(
                         "Continue to Summary",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       onPressed: () {
                         context.read<InterviewBloc>().add(FetchSummary());

@@ -6,10 +6,7 @@ import 'model/pronunciation_history.dart';
 class PronunciationTab extends StatelessWidget {
   final List<PronunciationHistory> history;
 
-  const PronunciationTab({
-    super.key,
-    required this.history,
-  });
+  const PronunciationTab({super.key, required this.history});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +54,10 @@ class PronunciationTab extends StatelessWidget {
                       _buildScoreChip('Score', item.nilai, Colors.blue),
                       SizedBox(width: 8),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
@@ -73,7 +73,9 @@ class PronunciationTab extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          DateFormat('dd MMM yyyy, HH:mm').format(item.waktulatihan),
+                          DateFormat(
+                            'dd MMM yyyy, HH:mm',
+                          ).format(item.waktulatihan),
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -101,7 +103,10 @@ class PronunciationTab extends StatelessWidget {
     );
   }
 
-  void _showPhonemeComparisonDialog(BuildContext context, PronunciationHistory item) {
+  void _showPhonemeComparisonDialog(
+    BuildContext context,
+    PronunciationHistory item,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -142,15 +147,12 @@ class PronunciationTab extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 4),
-                      Text(
-                        item.soal,
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      Text(item.soal, style: TextStyle(fontSize: 16)),
                     ],
                   ),
                 ),
                 SizedBox(height: 16),
-                
+
                 Row(
                   children: [
                     Expanded(
@@ -217,7 +219,7 @@ class PronunciationTab extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 16),
-                
+
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(8),
@@ -227,10 +229,16 @@ class PronunciationTab extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.access_time, size: 16, color: Colors.grey.shade600),
+                      Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: Colors.grey.shade600,
+                      ),
                       SizedBox(width: 8),
                       Text(
-                        DateFormat('dd MMMM yyyy, HH:mm').format(item.waktulatihan),
+                        DateFormat(
+                          'dd MMMM yyyy, HH:mm',
+                        ).format(item.waktulatihan),
                         style: TextStyle(
                           color: Colors.grey.shade700,
                           fontSize: 14,
@@ -240,7 +248,7 @@ class PronunciationTab extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
-                
+
                 Text(
                   'Phoneme Comparison:',
                   style: TextStyle(
@@ -250,8 +258,9 @@ class PronunciationTab extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8),
-                
-                if (item.phonemeComparison != null && item.phonemeComparison!.isNotEmpty)
+
+                if (item.phonemeComparison != null &&
+                    item.phonemeComparison!.isNotEmpty)
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -295,50 +304,60 @@ class PronunciationTab extends StatelessWidget {
                             ],
                           ),
                         ),
-                        ...item.phonemeComparison!.map((phoneme) => Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: Colors.grey.shade300, width: 0.5),
+                        ...item.phonemeComparison!.map(
+                          (phoneme) => Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Colors.grey.shade300,
+                                  width: 0.5,
+                                ),
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  phoneme.target == '-' ? 'N/A' : phoneme.target,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontFamily: 'monospace'),
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  phoneme.user == '-' ? 'N/A' : phoneme.user,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontFamily: 'monospace'),
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: _getStatusColor(phoneme.status),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
+                            child: Row(
+                              children: [
+                                Expanded(
                                   child: Text(
-                                    phoneme.status,
+                                    phoneme.target == '-'
+                                        ? 'N/A'
+                                        : phoneme.target,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
+                                    style: TextStyle(fontFamily: 'monospace'),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    phoneme.user == '-' ? 'N/A' : phoneme.user,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontFamily: 'monospace'),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _getStatusColor(phoneme.status),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      phoneme.status,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        )),
+                        ),
                       ],
                     ),
                   )
@@ -394,14 +413,13 @@ class PronunciationTab extends StatelessWidget {
     }
   }
 
-
   Widget _buildScoreChip(String label, double value, Color color) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         '$label: $value',
@@ -419,18 +437,11 @@ class PronunciationTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.history,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.history, size: 64, color: Colors.grey.shade400),
           SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
         ],
       ),

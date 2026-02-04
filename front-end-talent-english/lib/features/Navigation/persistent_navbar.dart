@@ -6,46 +6,64 @@ class PersistentBottomBarScaffold extends StatefulWidget {
   const PersistentBottomBarScaffold({super.key, required this.items});
 
   @override
-  _PersistentBottomBarScaffoldState createState() => _PersistentBottomBarScaffoldState();
+  State<PersistentBottomBarScaffold> createState() =>
+      _PersistentBottomBarScaffoldState();
 }
 
-class _PersistentBottomBarScaffoldState extends State<PersistentBottomBarScaffold> {
+class _PersistentBottomBarScaffoldState
+    extends State<PersistentBottomBarScaffold> {
   int _selectedTab = 0;
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (widget.items[_selectedTab].navigatorkey?.currentState?.canPop() ?? false) {
-          widget.items[_selectedTab].navigatorkey?.currentState?.pop();
-          return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        final navigator = widget.items[_selectedTab].navigatorkey?.currentState;
+        if (navigator != null && navigator.canPop()) {
+          navigator.pop();
+        } else {
+          Navigator.of(context).pop();
         }
-        return true;
       },
       child: Scaffold(
         body: IndexedStack(
           index: _selectedTab,
-          children: widget.items
-              .map((page) => Navigator(
-                    key: page.navigatorkey,
-                    onGenerateInitialRoutes: (navigator, initialRoute) {
-                      return [MaterialPageRoute(builder: (context) => page.tab)];
-                    },
-                  ))
-              .toList(),
+          children:
+              widget.items
+                  .map(
+                    (page) => Navigator(
+                      key: page.navigatorkey,
+                      onGenerateInitialRoutes: (navigator, initialRoute) {
+                        return [
+                          MaterialPageRoute(builder: (context) => page.tab),
+                        ];
+                      },
+                    ),
+                  )
+                  .toList(),
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedTab,
           onTap: (index) {
             if (index == _selectedTab) {
-              widget.items[index].navigatorkey?.currentState?.popUntil((route) => route.isFirst);
+              widget.items[index].navigatorkey?.currentState?.popUntil(
+                (route) => route.isFirst,
+              );
             } else {
               setState(() => _selectedTab = index);
             }
           },
-          items: widget.items
-              .map((item) => BottomNavigationBarItem(icon: Icon(item.icon), label: item.title))
-              .toList(),
+          items:
+              widget.items
+                  .map(
+                    (item) => BottomNavigationBarItem(
+                      icon: Icon(item.icon),
+                      label: item.title,
+                    ),
+                  )
+                  .toList(),
         ),
       ),
     );

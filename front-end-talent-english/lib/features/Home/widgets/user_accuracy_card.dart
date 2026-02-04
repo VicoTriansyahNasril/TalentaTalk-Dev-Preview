@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class UserAccuracyCard extends StatelessWidget {
@@ -10,7 +9,7 @@ class UserAccuracyCard extends StatelessWidget {
     super.key,
     required this.accuracy,
     required this.totalTests,
-     this.lastTestDaysAgo,
+    this.lastTestDaysAgo,
   });
 
   @override
@@ -26,7 +25,7 @@ class UserAccuracyCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.green.withOpacity(0.4),
+            color: Colors.green.withValues(alpha: 0.4),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -41,7 +40,7 @@ class UserAccuracyCard extends StatelessWidget {
               Text(
                 "Exam Accuracy",
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
                 ),
@@ -54,7 +53,7 @@ class UserAccuracyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: Stack(
@@ -65,8 +64,10 @@ class UserAccuracyCard extends StatelessWidget {
                       height: 80,
                       child: CircularProgressIndicator(
                         value: accuracy / 100,
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Colors.white,
+                        ),
                         strokeWidth: 8,
                       ),
                     ),
@@ -84,7 +85,7 @@ class UserAccuracyCard extends StatelessWidget {
                         Text(
                           "Accuracy",
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontSize: 12,
                           ),
                         ),
@@ -137,7 +138,7 @@ class UserAccuracyCard extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             fontSize: 14,
           ),
         ),

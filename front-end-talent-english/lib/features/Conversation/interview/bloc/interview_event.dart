@@ -1,4 +1,9 @@
-abstract class InterviewEvent {}
+import 'package:equatable/equatable.dart';
+
+abstract class InterviewEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 class StartInterview extends InterviewEvent {}
 
@@ -16,8 +21,9 @@ class SubmitSummary extends InterviewEvent {
   final int talentId;
 
   SubmitSummary(this.talentId);
+
+  @override
+  List<Object?> get props => [talentId];
 }
 
-class FetchSummary extends InterviewEvent {
-  
-}
+class FetchSummary extends InterviewEvent {}

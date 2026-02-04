@@ -32,7 +32,9 @@ class PracticeResultDialog extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    accuracyPercent >= 75 ? Icons.celebration : Icons.psychology,
+                    accuracyPercent >= 75
+                        ? Icons.celebration
+                        : Icons.psychology,
                     color: accuracyColor,
                     size: 24,
                   ),
@@ -86,7 +88,7 @@ class PracticeResultDialog extends StatelessWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: accuracyColor.withOpacity(0.1),
+                  color: accuracyColor.withValues(alpha: 0.1),
                   border: Border.all(color: accuracyColor, width: 3),
                 ),
                 child: Center(
@@ -134,10 +136,7 @@ class PracticeResultDialog extends StatelessWidget {
                     const Spacer(),
                     Text(
                       "${_getCorrectPhonemes()} / ${phonemeComparison.length}",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -153,9 +152,10 @@ class PracticeResultDialog extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 8),
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: result.isCorrect
-                              ? Colors.green.withOpacity(0.1)
-                              : Colors.red.withOpacity(0.1),
+                          color:
+                              result.isCorrect
+                                  ? Colors.green.withValues(alpha: 0.1)
+                                  : Colors.red.withValues(alpha: 0.1),
                           border: Border.all(
                             color: result.isCorrect ? Colors.green : Colors.red,
                             width: 1,
@@ -168,7 +168,8 @@ class PracticeResultDialog extends StatelessWidget {
                               result.isCorrect
                                   ? Icons.check_circle_outline
                                   : Icons.error_outline,
-                              color: result.isCorrect ? Colors.green : Colors.red,
+                              color:
+                                  result.isCorrect ? Colors.green : Colors.red,
                               size: 16,
                             ),
                             const SizedBox(width: 8),
@@ -203,7 +204,10 @@ class PracticeResultDialog extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
-                                        color: result.isCorrect ? Colors.green : Colors.red,
+                                        color:
+                                            result.isCorrect
+                                                ? Colors.green
+                                                : Colors.red,
                                       ),
                                     ),
                                   ],

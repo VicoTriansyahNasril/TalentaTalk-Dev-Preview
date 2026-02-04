@@ -24,12 +24,13 @@ class ScoreScreen extends StatelessWidget {
                 children: [
                   Text(
                     "Average Score: ${(state.score * 100).toStringAsFixed(1)}%",
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  ...state.results.map(
-                    (result) => ScoreCard(result: result),
-                  ),
+                  ...state.results.map((result) => ScoreCard(result: result)),
                   const SizedBox(height: 32),
                   Center(
                     child: ElevatedButton(
@@ -65,7 +66,7 @@ class ScoreCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             spreadRadius: 2,
             blurRadius: 5,
           ),
@@ -86,4 +87,3 @@ class ScoreCard extends StatelessWidget {
     );
   }
 }
-

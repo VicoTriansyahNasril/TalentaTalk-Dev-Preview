@@ -1,9 +1,11 @@
+import 'dart:developer' as dev;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'phoneme_category_event.dart';
 import 'phoneme_category_state.dart';
 import '../repository/phoneme_repository.dart';
 
-class PhonemeCategoryBloc extends Bloc<PhonemeCategoryEvent, PhonemeCategoryState> {
+class PhonemeCategoryBloc
+    extends Bloc<PhonemeCategoryEvent, PhonemeCategoryState> {
   final PhonemeRepository repository;
 
   PhonemeCategoryBloc(this.repository) : super(PhonemeInitial()) {
@@ -12,13 +14,16 @@ class PhonemeCategoryBloc extends Bloc<PhonemeCategoryEvent, PhonemeCategoryStat
       try {
         final phonemes = await repository.fetchPhonemes();
         for (var p in phonemes) {
-          print('Phoneme: ${p.phoneme}, Example: ${p.example}, Type: ${p.type}');
+          dev.log(
+            'Phoneme: ${p.phoneme}, Example: ${p.example}, Type: ${p.type}',
+          );
         }
         final vowels = phonemes.where((p) => p.type == 'vowel').toList();
-        final consonants = phonemes.where((p) => p.type == 'consonant').toList();
+        final consonants =
+            phonemes.where((p) => p.type == 'consonant').toList();
         emit(PhonemeLoaded(vowels: vowels, consonants: consonants));
       } catch (e) {
-        print('Error fetching phonemes: $e'); 
+        dev.log('Error fetching phonemes: $e');
         emit(PhonemeError(e.toString()));
       }
     });

@@ -34,35 +34,25 @@ class PracticeSummaryScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [scoreColor.withOpacity(0.1), Colors.white],
+                  colors: [scoreColor.withValues(alpha: 0.1), Colors.white],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: scoreColor.withOpacity(0.3)),
+                border: Border.all(color: scoreColor.withValues(alpha: 0.3)),
               ),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.emoji_events,
-                    color: scoreColor,
-                    size: 48,
-                  ),
+                  Icon(Icons.emoji_events, color: scoreColor, size: 48),
                   const SizedBox(height: 16),
                   const Text(
                     "Pretest Complete!",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     "Congratulations on completing your pretest",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -77,8 +67,8 @@ class PracticeSummaryScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    scoreColor.withOpacity(0.1),
-                    scoreColor.withOpacity(0.05),
+                    scoreColor.withValues(alpha: 0.1),
+                    scoreColor.withValues(alpha: 0.05),
                   ],
                 ),
                 border: Border.all(color: scoreColor, width: 6),
@@ -154,11 +144,7 @@ class PracticeSummaryScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        Icons.analytics,
-                        color: Colors.grey[700],
-                        size: 24,
-                      ),
+                      Icon(Icons.analytics, color: Colors.grey[700], size: 24),
                       const SizedBox(width: 8),
                       const Text(
                         "Detailed Results",
@@ -170,12 +156,13 @@ class PracticeSummaryScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
+
                   ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: completedSentences.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    separatorBuilder:
+                        (context, index) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final result = completedSentences[index];
                       final scorePercent = result.score * 100;
@@ -187,7 +174,7 @@ class PracticeSummaryScreen extends StatelessWidget {
                           border: Border.all(color: Colors.grey[200]!),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.grey.withValues(alpha: 0.1),
                               spreadRadius: 1,
                               blurRadius: 4,
                               offset: const Offset(0, 2),
@@ -200,8 +187,13 @@ class PracticeSummaryScreen extends StatelessWidget {
                               width: 40,
                               height: 40,
                               decoration: BoxDecoration(
-                                color: _getScoreColor(scorePercent).withOpacity(0.15),
-                                border: Border.all(color: _getScoreColor(scorePercent), width: 2),
+                                color: _getScoreColor(
+                                  scorePercent,
+                                ).withValues(alpha: 0.15),
+                                border: Border.all(
+                                  color: _getScoreColor(scorePercent),
+                                  width: 2,
+                                ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Center(
@@ -216,7 +208,7 @@ class PracticeSummaryScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            
+
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,7 +243,7 @@ class PracticeSummaryScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            
+
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
@@ -304,7 +296,6 @@ class PracticeSummaryScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                
               ],
             ),
             const SizedBox(height: 20),
@@ -314,7 +305,12 @@ class PracticeSummaryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -323,7 +319,7 @@ class PracticeSummaryScreen extends StatelessWidget {
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -332,11 +328,7 @@ class PracticeSummaryScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 28,
-          ),
+          Icon(icon, color: color, size: 28),
           const SizedBox(height: 8),
           Text(
             value,

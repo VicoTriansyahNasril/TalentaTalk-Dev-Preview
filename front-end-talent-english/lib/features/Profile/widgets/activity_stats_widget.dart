@@ -51,8 +51,7 @@ class ActivityStatsWidget extends StatelessWidget {
                   const Divider(),
                   _buildActivityItem(
                     title: "Interview Practice",
-                    subtitle:
-                        "${user.interviewCompleted} sessions completed",
+                    subtitle: "${user.interviewCompleted} sessions completed",
                     icon: Icons.mic,
                     color: Colors.purple,
                   ),
@@ -78,14 +77,10 @@ class ActivityStatsWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
+            child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -101,10 +96,7 @@ class ActivityStatsWidget extends StatelessWidget {
                 ),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
               ],
             ),

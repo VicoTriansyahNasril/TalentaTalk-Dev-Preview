@@ -29,18 +29,12 @@ class PronunciationResultDialog extends StatelessWidget {
           children: [
             Text(
               "Pronunciation Results",
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
               targetPhrase,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -49,7 +43,7 @@ class PronunciationResultDialog extends StatelessWidget {
               height: 120,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: accuracyColor.withOpacity(0.2),
+                color: accuracyColor.withValues(alpha: 0.2),
                 border: Border.all(color: accuracyColor, width: 4),
               ),
               child: Center(
@@ -78,10 +72,7 @@ class PronunciationResultDialog extends StatelessWidget {
             const SizedBox(height: 8),
             const Text(
               "Phoneme Breakdown",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Flexible(
@@ -97,20 +88,14 @@ class PronunciationResultDialog extends StatelessWidget {
                       child: Row(
                         children: [
                           Icon(
-                            result.isCorrect
-                                ? Icons.check_circle
-                                : Icons.error,
-                            color: result.isCorrect
-                                ? Colors.green
-                                : Colors.red,
+                            result.isCorrect ? Icons.check_circle : Icons.error,
+                            color: result.isCorrect ? Colors.green : Colors.red,
                             size: 16,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             "Target: ${result.targetPhoneme}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(width: 8),
                           Text("Your: ${result.userPhoneme}"),

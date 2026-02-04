@@ -18,9 +18,7 @@ class ConversationReportWidget extends StatelessWidget {
         _buildSummaryHeader(context),
         _buildStatisticsCards(context),
         const SizedBox(height: 16),
-        Expanded(
-          child: _buildDetailedReport(context),
-        ),
+        Expanded(child: _buildDetailedReport(context)),
       ],
     );
   }
@@ -39,7 +37,7 @@ class ConversationReportWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
+            color: Colors.blue.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -50,11 +48,7 @@ class ConversationReportWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.assessment,
-                color: Colors.white,
-                size: 28,
-              ),
+              const Icon(Icons.assessment, color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Text(
                 'Conversation Report',
@@ -72,30 +66,6 @@ class ConversationReportWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.white70, size: 16),
-        const SizedBox(width: 8),
-        Text(
-          '$label: ',
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildStatusRow() {
     final isSuccess = saveStatus['success'] ?? false;
     return Row(
@@ -106,12 +76,9 @@ class ConversationReportWidget extends StatelessWidget {
           size: 16,
         ),
         const SizedBox(width: 8),
-        Text(
+        const Text(
           'Status: ',
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white70, fontSize: 14),
         ),
         Text(
           isSuccess ? 'Saved Successfully' : 'Save Failed',
@@ -127,7 +94,7 @@ class ConversationReportWidget extends StatelessWidget {
 
   Widget _buildStatisticsCards(BuildContext context) {
     final stats = _calculateStatistics();
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -166,17 +133,22 @@ class ConversationReportWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(BuildContext context, String title, String value, 
-                       IconData icon, Color color) {
+  Widget _buildStatCard(
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -197,10 +169,7 @@ class ConversationReportWidget extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),
         ],
@@ -216,7 +185,7 @@ class ConversationReportWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -265,7 +234,7 @@ class ConversationReportWidget extends StatelessWidget {
 
   Widget _buildReportItem(BuildContext context, ReportResult item, int index) {
     final hasGrammarIssues = item.grammarIssues.isNotEmpty;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -279,28 +248,32 @@ class ConversationReportWidget extends StatelessWidget {
         childrenPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
           radius: 16,
-          backgroundColor: hasGrammarIssues ? Colors.red.shade100 : Colors.green.shade100,
+          backgroundColor:
+              hasGrammarIssues ? Colors.red.shade100 : Colors.green.shade100,
           child: Text(
             '$index',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: hasGrammarIssues ? Colors.red.shade700 : Colors.green.shade700,
+              color:
+                  hasGrammarIssues
+                      ? Colors.red.shade700
+                      : Colors.green.shade700,
             ),
           ),
         ),
         title: Text(
           _truncateText(item.userInput, 40),
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 8),
           child: Row(
             children: [
-              _buildMetricChip('${item.wpm.toStringAsFixed(1)} WPM', Colors.blue),
+              _buildMetricChip(
+                '${item.wpm.toStringAsFixed(1)} WPM',
+                Colors.blue,
+              ),
               const SizedBox(width: 8),
               _buildMetricChip(
                 '${item.confidence}%',
@@ -315,9 +288,7 @@ class ConversationReportWidget extends StatelessWidget {
             ],
           ),
         ),
-        children: [
-          _buildExpandedContent(item),
-        ],
+        children: [_buildExpandedContent(item)],
       ),
     );
   }
@@ -326,16 +297,13 @@ class ConversationReportWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-        ),
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -356,16 +324,10 @@ class ConversationReportWidget extends StatelessWidget {
             children: [
               const Text(
                 'Full sentence:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               ),
               const SizedBox(height: 4),
-              Text(
-                item.userInput,
-                style: const TextStyle(fontSize: 14),
-              ),
+              Text(item.userInput, style: const TextStyle(fontSize: 14)),
             ],
           ),
         ),
@@ -398,7 +360,11 @@ class ConversationReportWidget extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.check_circle, color: Colors.green.shade600, size: 16),
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green.shade600,
+                  size: 16,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'No grammar issues found',
@@ -491,10 +457,7 @@ class ConversationReportWidget extends StatelessWidget {
             ),
             child: Text(
               'Context: ${issue.sentence}',
-              style: const TextStyle(
-                fontSize: 11,
-                fontStyle: FontStyle.italic,
-              ),
+              style: const TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
             ),
           ),
         ],
@@ -504,15 +467,14 @@ class ConversationReportWidget extends StatelessWidget {
 
   Map<String, dynamic> _calculateStatistics() {
     if (report.isEmpty) {
-      return {
-        'totalSentences': 0,
-        'avgWpm': 0.0,
-        'avgConfidence': 0.0,
-      };
+      return {'totalSentences': 0, 'avgWpm': 0.0, 'avgConfidence': 0.0};
     }
 
     final totalWpm = report.fold(0.0, (sum, item) => sum + item.wpm);
-    final totalConfidence = report.fold(0, (sum, item) => sum + item.confidence);
+    final totalConfidence = report.fold(
+      0,
+      (sum, item) => sum + item.confidence,
+    );
 
     return {
       'totalSentences': report.length,

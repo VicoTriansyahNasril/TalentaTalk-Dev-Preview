@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:developer' as dev;
 import 'bloc/material_list_bloc.dart';
 import 'bloc/material_list_event.dart';
 import 'bloc/material_list_state.dart';
@@ -10,20 +11,20 @@ import '../../../../core/constants.dart';
 
 class MaterialListScreen extends StatelessWidget {
   final List<String> phonemes;
-  
-  const MaterialListScreen({
-    super.key, 
-    required this.phonemes,
-  });
+
+  const MaterialListScreen({super.key, required this.phonemes});
 
   @override
   Widget build(BuildContext context) {
-    print('Phonemes: ${phonemes.join(', ')}');
+    dev.log('Phonemes: ${phonemes.join(', ')}');
     final service = MaterialService(baseUrl: Env.baseUrl);
     final repository = MaterialRepository(service);
 
     return BlocProvider(
-      create: (_) => MaterialListBloc(repository)..add(LoadMaterialsForPhonemes(phonemes)),
+      create:
+          (_) =>
+              MaterialListBloc(repository)
+                ..add(LoadMaterialsForPhonemes(phonemes)),
       child: Scaffold(
         appBar: AppBar(
           title: Text('Materi: ${phonemes.map((p) => '/$p/').join(' vs ')}'),
@@ -58,7 +59,9 @@ class MaterialListScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<MaterialListBloc>().add(LoadMaterialsForPhonemes(phonemes));
+                        context.read<MaterialListBloc>().add(
+                          LoadMaterialsForPhonemes(phonemes),
+                        );
                       },
                       child: const Text('Retry'),
                     ),

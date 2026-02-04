@@ -23,10 +23,7 @@ class QuickStatsGrid extends StatelessWidget {
       children: [
         const Text(
           "Training Overview",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         Row(
@@ -44,7 +41,10 @@ class QuickStatsGrid extends StatelessWidget {
               child: _StatCard(
                 icon: Icons.trending_up,
                 title: "Avg Phoneme",
-                value: avgPhonemeScore > 0 ? avgPhonemeScore.toStringAsFixed(1) : "N/A",
+                value:
+                    avgPhonemeScore > 0
+                        ? avgPhonemeScore.toStringAsFixed(1)
+                        : "N/A",
                 color: Colors.purple,
               ),
             ),
@@ -99,9 +99,7 @@ class _StatCard extends StatelessWidget {
     return Card(
       elevation: 2,
       shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -112,14 +110,10 @@ class _StatCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 20,
-                  ),
+                  child: Icon(icon, color: color, size: 20),
                 ),
                 const Spacer(),
               ],

@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/material_list_bloc.dart';
@@ -10,21 +11,26 @@ import '../../../../core/constants.dart';
 
 class ExamMaterialScreen extends StatelessWidget {
   final List<String> phonemes;
-  
+
   const ExamMaterialScreen({super.key, required this.phonemes});
 
   @override
   Widget build(BuildContext context) {
-    print('Phonemes: ${phonemes.join(', ')}');
-    
+    dev.log('Phonemes: ${phonemes.join(', ')}');
+
     final service = MaterialService(baseUrl: Env.baseUrl);
     final repository = MaterialRepository(service);
 
     return BlocProvider(
-      create: (_) => ExamMaterialBloc(repository)..add(LoadMultipleMaterials(phonemes)),
+      create:
+          (_) =>
+              ExamMaterialBloc(repository)
+                ..add(LoadMultipleMaterials(phonemes)),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('List Materi - ${phonemes.map((p) => '/$p/').join(' vs ')}'),
+          title: Text(
+            'List Materi - ${phonemes.map((p) => '/$p/').join(' vs ')}',
+          ),
         ),
         body: BlocBuilder<ExamMaterialBloc, ExamMaterialState>(
           builder: (context, state) {
@@ -34,7 +40,10 @@ class ExamMaterialScreen extends StatelessWidget {
               return ListView.builder(
                 itemCount: state.materials.length,
                 itemBuilder: (context, index) {
-                  return MaterialItemWidget(material: state.materials[index],examNumber: index + 1,);
+                  return MaterialItemWidget(
+                    material: state.materials[index],
+                    examNumber: index + 1,
+                  );
                 },
               );
             } else if (state is MaterialEmpty) {

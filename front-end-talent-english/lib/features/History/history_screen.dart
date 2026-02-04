@@ -13,7 +13,7 @@ class TrainingHistoryScreen extends StatefulWidget {
   const TrainingHistoryScreen({super.key});
 
   @override
-  _TrainingHistoryScreenState createState() => _TrainingHistoryScreenState();
+  State<TrainingHistoryScreen> createState() => _TrainingHistoryScreenState();
 }
 
 class _TrainingHistoryScreenState extends State<TrainingHistoryScreen>
@@ -70,7 +70,9 @@ class _TrainingHistoryScreenState extends State<TrainingHistoryScreen>
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<TrainingHistoryBloc>().add(LoadTrainingHistory());
+                      context.read<TrainingHistoryBloc>().add(
+                        LoadTrainingHistory(),
+                      );
                     },
                     child: Text('Retry'),
                   ),
@@ -80,7 +82,9 @@ class _TrainingHistoryScreenState extends State<TrainingHistoryScreen>
           } else if (state is TrainingHistoryLoaded) {
             return RefreshIndicator(
               onRefresh: () async {
-                context.read<TrainingHistoryBloc>().add(RefreshTrainingHistory());
+                context.read<TrainingHistoryBloc>().add(
+                  RefreshTrainingHistory(),
+                );
               },
               child: TabBarView(
                 controller: _tabController,

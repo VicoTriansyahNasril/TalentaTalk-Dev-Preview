@@ -12,7 +12,8 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(AuthRepository())..add(CheckAuthStatusEvent()),
+      create:
+          (context) => AuthBloc(AuthRepository())..add(CheckAuthStatusEvent()),
       child: const SplashView(),
     );
   }
@@ -49,17 +50,20 @@ class _SplashViewState extends State<SplashView> {
           context.go('/login');
         } else if (state is AuthTokenExpired) {
           context.go('/login');
-          
+
           Future.delayed(Duration.zero, () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Your session has expired. Please login again.'),
-                backgroundColor: Colors.orange,
-              ),
-            );
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Your session has expired. Please login again.',
+                  ),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            }
           });
         } else if (state is AuthError) {
-          // On error, go to login
           context.go('/login');
         }
       },
@@ -108,26 +112,17 @@ class _SplashViewState extends State<SplashView> {
                   if (state is AuthLoading) {
                     return const Text(
                       "Checking authentication...",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     );
                   } else if (state is AuthTokenExpired) {
                     return const Text(
                       "Session expired, redirecting to login...",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.orange,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.orange),
                     );
                   } else if (state is AuthError) {
                     return Text(
                       "Error: ${state.message}",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.red,
-                      ),
+                      style: const TextStyle(fontSize: 14, color: Colors.red),
                     );
                   }
                   return const SizedBox.shrink();

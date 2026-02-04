@@ -15,7 +15,10 @@ class ExamScoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ExamScoreBloc(ExamScoreRepository(baseUrl: Env.baseUrl))..add(LoadExamScore(examId)),
+      create:
+          (_) =>
+              ExamScoreBloc(ExamScoreRepository(baseUrl: Env.baseUrl))
+                ..add(LoadExamScore(examId)),
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F5F7),
         appBar: AppBar(
@@ -46,11 +49,7 @@ class ExamScoreScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Colors.red[400],
-                    ),
+                    Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
                     const SizedBox(height: 16),
                     Text(
                       'Oops! Something went wrong',
@@ -63,10 +62,7 @@ class ExamScoreScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       state.message,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -87,20 +83,21 @@ class ExamScoreScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [scoreColor.withOpacity(0.1), Colors.white],
+                          colors: [
+                            scoreColor.withValues(alpha: 0.1),
+                            Colors.white,
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: scoreColor.withOpacity(0.3)),
+                        border: Border.all(
+                          color: scoreColor.withValues(alpha: 0.3),
+                        ),
                       ),
                       child: Column(
                         children: [
-                          Icon(
-                            Icons.emoji_events,
-                            color: scoreColor,
-                            size: 48,
-                          ),
+                          Icon(Icons.emoji_events, color: scoreColor, size: 48),
                           const SizedBox(height: 16),
                           const Text(
                             "Test Complete!",
@@ -130,8 +127,8 @@ class ExamScoreScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            scoreColor.withOpacity(0.1),
-                            scoreColor.withOpacity(0.05),
+                            scoreColor.withValues(alpha: 0.1),
+                            scoreColor.withValues(alpha: 0.05),
                           ],
                         ),
                         border: Border.all(color: scoreColor, width: 6),
@@ -166,9 +163,11 @@ class ExamScoreScreen extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: scoreColor.withOpacity(0.05),
+                        color: scoreColor.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: scoreColor.withOpacity(0.2)),
+                        border: Border.all(
+                          color: scoreColor.withValues(alpha: 0.2),
+                        ),
                       ),
                       child: Text(
                         overallFeedback,
@@ -243,12 +242,13 @@ class ExamScoreScreen extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          
+
                           ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: result.detail.length,
-                            separatorBuilder: (context, index) => const SizedBox(height: 12),
+                            separatorBuilder:
+                                (context, index) => const SizedBox(height: 12),
                             itemBuilder: (context, index) {
                               final detail = result.detail[index];
                               final scorePercent = detail.nilai;
@@ -260,7 +260,7 @@ class ExamScoreScreen extends StatelessWidget {
                                   border: Border.all(color: Colors.grey[200]!),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.grey.withOpacity(0.1),
+                                      color: Colors.grey.withValues(alpha: 0.1),
                                       spreadRadius: 1,
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
@@ -273,8 +273,13 @@ class ExamScoreScreen extends StatelessWidget {
                                       width: 40,
                                       height: 40,
                                       decoration: BoxDecoration(
-                                        color: _getScoreColor(scorePercent).withOpacity(0.15),
-                                        border: Border.all(color: _getScoreColor(scorePercent), width: 2),
+                                        color: _getScoreColor(
+                                          scorePercent,
+                                        ).withValues(alpha: 0.15),
+                                        border: Border.all(
+                                          color: _getScoreColor(scorePercent),
+                                          width: 2,
+                                        ),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Center(
@@ -289,7 +294,7 @@ class ExamScoreScreen extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(width: 16),
-                                    
+
                                     Expanded(
                                       child: Text(
                                         detail.kalimat,
@@ -299,7 +304,7 @@ class ExamScoreScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    
+
                                     Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 12,
@@ -363,7 +368,12 @@ class ExamScoreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -372,7 +382,7 @@ class ExamScoreScreen extends StatelessWidget {
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -381,11 +391,7 @@ class ExamScoreScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 28,
-          ),
+          Icon(icon, color: color, size: 28),
           const SizedBox(height: 8),
           Text(
             value,

@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'model/similar_phoneme_pair.dart';
@@ -25,10 +26,7 @@ class SimilarPhonemePairScreen extends StatelessWidget {
           elevation: 0,
           iconTheme: const IconThemeData(color: Colors.black87),
           bottom: TabBar(
-            tabs: const [
-              Tab(text: 'Vowels'),
-              Tab(text: 'Consonants'),
-            ],
+            tabs: const [Tab(text: 'Vowels'), Tab(text: 'Consonants')],
             labelColor: Colors.blue[700],
             unselectedLabelColor: Colors.grey[600],
             indicatorColor: Colors.blue[700],
@@ -51,22 +49,22 @@ class SimilarPhonemePairScreen extends StatelessWidget {
       itemCount: pairs.length,
       itemBuilder: (context, index) {
         final pair = pairs[index];
-        
+
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           child: Material(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             elevation: 2,
-            shadowColor: Colors.black.withOpacity(0.1),
+            shadowColor: Colors.black.withValues(alpha: 0.1),
             child: InkWell(
               onTap: () {
-                print('Navigating with phonemes: ${pair.phonemes.join(', ')}');
+                dev.log(
+                  'Navigating with phonemes: ${pair.phonemes.join(', ')}',
+                );
                 context.pushNamed(
                   'material_list',
-                  queryParameters: {
-                    'phonemes': pair.phonemes.join(','),
-                  },
+                  queryParameters: {'phonemes': pair.phonemes.join(',')},
                 );
               },
               borderRadius: BorderRadius.circular(16),
@@ -100,7 +98,10 @@ class SimilarPhonemePairScreen extends StatelessWidget {
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [Colors.green[100]!, Colors.green[50]!],
@@ -132,10 +133,10 @@ class SimilarPhonemePairScreen extends StatelessWidget {
 
   Widget _buildPhonemeRow(SimilarPhonemePair pair) {
     List<Widget> phonemeBoxes = [];
-   
+
     for (int i = 0; i < pair.phonemes.length; i++) {
       phonemeBoxes.add(_phonemeBox(pair.phonemes[i], pair.examples[i]));
-     
+
       if (i < pair.phonemes.length - 1) {
         phonemeBoxes.add(const SizedBox(width: 12));
         phonemeBoxes.add(
@@ -156,9 +157,7 @@ class SimilarPhonemePairScreen extends StatelessWidget {
       }
     }
 
-    return Row(
-      children: phonemeBoxes,
-    );
+    return Row(children: phonemeBoxes);
   }
 
   Widget _phonemeBox(String phoneme, String example) {

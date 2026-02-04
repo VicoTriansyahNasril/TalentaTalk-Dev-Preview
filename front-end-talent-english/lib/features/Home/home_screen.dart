@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
             listener: (context, state) {
               if (state is HomeTokenExpired) {
                 context.go('/login');
-                
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Session expired. Please login again.'),
@@ -53,7 +53,11 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline, size: 64, color: Colors.redAccent),
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Colors.redAccent,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           state.message,
@@ -62,7 +66,9 @@ class HomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
                         ElevatedButton.icon(
-                          onPressed: () => context.read<HomeBloc>().add(LoadHomeData()),
+                          onPressed:
+                              () =>
+                                  context.read<HomeBloc>().add(LoadHomeData()),
                           icon: const Icon(Icons.refresh),
                           label: const Text("Coba Lagi"),
                         ),
@@ -78,7 +84,10 @@ class HomeScreen extends StatelessWidget {
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
-                              colors: [Colors.blue.shade600, Colors.blue.shade800],
+                              colors: [
+                                Colors.blue.shade600,
+                                Colors.blue.shade800,
+                              ],
                             ),
                           ),
                           child: Padding(
@@ -90,13 +99,16 @@ class HomeScreen extends StatelessWidget {
                                   children: [
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             "Welcome Back!",
                                             style: TextStyle(
                                               fontSize: 16,
-                                              color: Colors.white.withOpacity(0.9),
+                                              color: Colors.white.withValues(
+                                                alpha: 0.9,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(height: 4),
@@ -114,7 +126,9 @@ class HomeScreen extends StatelessWidget {
                                     Container(
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
                                         borderRadius: BorderRadius.circular(16),
                                       ),
                                       child: const Icon(
@@ -137,17 +151,26 @@ class HomeScreen extends StatelessWidget {
                           child: Column(
                             children: [
                               LearningStreakCard(
-                                streakDays: state.learningStreak?.currentStreak ?? 0,
-                                thisWeekActivities: state.learningStreak?.thisWeekActivities ?? 0,
+                                streakDays:
+                                    state.learningStreak?.currentStreak ?? 0,
+                                thisWeekActivities:
+                                    state.learningStreak?.thisWeekActivities ??
+                                    0,
                               ),
                               const SizedBox(height: 20),
 
                               QuickStatsGrid(
-                                totalSessions: state.quickStats?.totalTrainingSessions ?? 0,
-                                avgPhonemeScore: state.quickStats?.avgPhonemeScore ?? 0.0,
-                                avgSpeakingWpm: state.quickStats?.avgSpeakingWpm ?? 0.0,
-                                phonemeSessions: state.quickStats?.phonemeSessions ?? 0,
-                                speakingSessions: state.quickStats?.speakingSessions ?? 0,
+                                totalSessions:
+                                    state.quickStats?.totalTrainingSessions ??
+                                    0,
+                                avgPhonemeScore:
+                                    state.quickStats?.avgPhonemeScore ?? 0.0,
+                                avgSpeakingWpm:
+                                    state.quickStats?.avgSpeakingWpm ?? 0.0,
+                                phonemeSessions:
+                                    state.quickStats?.phonemeSessions ?? 0,
+                                speakingSessions:
+                                    state.quickStats?.speakingSessions ?? 0,
                               ),
                               const SizedBox(height: 20),
 
@@ -161,13 +184,13 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-
                                 ],
                               ),
                               const SizedBox(height: 24),
 
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     "Recent Activities",
@@ -196,55 +219,51 @@ class HomeScreen extends StatelessWidget {
 
                       state.activities.isEmpty
                           ? const SliverToBoxAdapter(
-                              child: Padding(
-                                padding: EdgeInsets.all(40),
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.assignment_outlined,
-                                      size: 64,
+                            child: Padding(
+                              padding: EdgeInsets.all(40),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.assignment_outlined,
+                                    size: 64,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    "No activities yet",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
                                       color: Colors.grey,
                                     ),
-                                    SizedBox(height: 16),
-                                    Text(
-                                      "No activities yet",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      "Start training to see your progress here",
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : SliverPadding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
-                              sliver: SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                    final activity = state.activities[index];
-                                    return ActivityItem(
-                                      activity: activity,
-                                      isLast: index == state.activities.length - 1,
-                                    );
-                                  },
-                                  childCount: state.activities.length,
-                                ),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "Start training to see your progress here",
+                                    style: TextStyle(color: Colors.grey),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
                             ),
+                          )
+                          : SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate((
+                                context,
+                                index,
+                              ) {
+                                final activity = state.activities[index];
+                                return ActivityItem(
+                                  activity: activity,
+                                  isLast: index == state.activities.length - 1,
+                                );
+                              }, childCount: state.activities.length),
+                            ),
+                          ),
 
-                      const SliverToBoxAdapter(
-                        child: SizedBox(height: 30),
-                      ),
+                      const SliverToBoxAdapter(child: SizedBox(height: 30)),
                     ],
                   );
                 }
@@ -262,11 +281,7 @@ class ActivityItem extends StatelessWidget {
   final UserActivity activity;
   final bool isLast;
 
-  const ActivityItem({
-    super.key, 
-    required this.activity,
-    this.isLast = false,
-  });
+  const ActivityItem({super.key, required this.activity, this.isLast = false});
 
   @override
   Widget build(BuildContext context) {
@@ -275,13 +290,10 @@ class ActivityItem extends StatelessWidget {
       child: Card(
         elevation: 2,
         shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {
-          },
+          onTap: () {},
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -289,7 +301,7 @@ class ActivityItem extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _getTypeColor(activity.type).withOpacity(0.1),
+                    color: _getTypeColor(activity.type).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -320,7 +332,9 @@ class ActivityItem extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            DateFormat('dd MMM yyyy, HH:mm').format(activity.waktulatihan),
+                            DateFormat(
+                              'dd MMM yyyy, HH:mm',
+                            ).format(activity.waktulatihan),
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 13,
@@ -331,7 +345,10 @@ class ActivityItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(8),
@@ -353,9 +370,14 @@ class ActivityItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getScoreColor(activity.score).withOpacity(0.1),
+                        color: _getScoreColor(
+                          activity.score,
+                        ).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -410,7 +432,8 @@ class ActivityItem extends StatelessWidget {
   }
 
   String _getScoreUnit(String type) {
-    if (type.toLowerCase() == 'conversation' || type.toLowerCase() == 'interview') {
+    if (type.toLowerCase() == 'conversation' ||
+        type.toLowerCase() == 'interview') {
       return ' WPM';
     }
     return '';

@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class OverallPerformanceCard extends StatelessWidget {
   final Map<String, dynamic> overallPerformance;
 
-  const OverallPerformanceCard({
-    super.key,
-    required this.overallPerformance,
-  });
+  const OverallPerformanceCard({super.key, required this.overallPerformance});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +31,11 @@ class OverallPerformanceCard extends StatelessWidget {
                   color: Colors.purple.shade100,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.assessment_outlined, color: Colors.purple.shade700, size: 24),
+                child: Icon(
+                  Icons.assessment_outlined,
+                  color: Colors.purple.shade700,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               const Expanded(
@@ -51,14 +52,23 @@ class OverallPerformanceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           if (overallPerformance['technical_knowledge'] != null)
-            _buildEnhancedPerformanceRow("Technical Knowledge", 
-              overallPerformance['technical_knowledge'], Icons.code),
+            _buildEnhancedPerformanceRow(
+              "Technical Knowledge",
+              overallPerformance['technical_knowledge'],
+              Icons.code,
+            ),
           if (overallPerformance['communication_speed'] != null)
-            _buildEnhancedPerformanceRow("Communication Speed", 
-              overallPerformance['communication_speed'], Icons.speed),
+            _buildEnhancedPerformanceRow(
+              "Communication Speed",
+              overallPerformance['communication_speed'],
+              Icons.speed,
+            ),
           if (overallPerformance['grammar_usage'] != null)
-            _buildEnhancedPerformanceRow("Grammar Usage", 
-              overallPerformance['grammar_usage'], Icons.spellcheck),
+            _buildEnhancedPerformanceRow(
+              "Grammar Usage",
+              overallPerformance['grammar_usage'],
+              Icons.spellcheck,
+            ),
           if (overallPerformance['recommendation'] != null) ...[
             const SizedBox(height: 20),
             Container(
@@ -105,17 +115,23 @@ class OverallPerformanceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildEnhancedPerformanceRow(String label, String value, IconData icon) {
+  Widget _buildEnhancedPerformanceRow(
+    String label,
+    String value,
+    IconData icon,
+  ) {
     Color valueColor = Colors.black87;
     Color bgColor = Colors.grey.shade100;
-    
+
     if (value.toLowerCase().contains('poor')) {
       valueColor = Colors.red.shade700;
       bgColor = Colors.red.shade50;
-    } else if (value.toLowerCase().contains('good') || value.toLowerCase().contains('excellent')) {
+    } else if (value.toLowerCase().contains('good') ||
+        value.toLowerCase().contains('excellent')) {
       valueColor = Colors.green.shade700;
       bgColor = Colors.green.shade50;
-    } else if (value.toLowerCase().contains('average') || value.toLowerCase().contains('medium')) {
+    } else if (value.toLowerCase().contains('average') ||
+        value.toLowerCase().contains('medium')) {
       valueColor = Colors.orange.shade700;
       bgColor = Colors.orange.shade50;
     }
@@ -128,7 +144,7 @@ class OverallPerformanceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

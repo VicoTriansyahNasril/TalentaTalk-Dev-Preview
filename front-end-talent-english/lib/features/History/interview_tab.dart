@@ -6,10 +6,7 @@ import 'model/interview_history.dart';
 class InterviewTab extends StatelessWidget {
   final List<InterviewHistory> history;
 
-  const InterviewTab({
-    super.key,
-    required this.history,
-  });
+  const InterviewTab({super.key, required this.history});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +42,7 @@ class InterviewTab extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 12),
-                  
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +61,9 @@ class InterviewTab extends StatelessWidget {
                             SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                DateFormat('dd MMM yyyy').format(item.waktulatihan),
+                                DateFormat(
+                                  'dd MMM yyyy',
+                                ).format(item.waktulatihan),
                                 style: TextStyle(
                                   color: Colors.grey.shade600,
                                   fontSize: 12,
@@ -76,7 +75,7 @@ class InterviewTab extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
@@ -144,7 +143,7 @@ class InterviewTab extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
-                
+
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(8),
@@ -154,10 +153,16 @@ class InterviewTab extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.access_time, size: 16, color: Colors.grey.shade600),
+                      Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: Colors.grey.shade600,
+                      ),
                       SizedBox(width: 8),
                       Text(
-                        DateFormat('dd MMMM yyyy, HH:mm').format(item.waktulatihan),
+                        DateFormat(
+                          'dd MMMM yyyy, HH:mm',
+                        ).format(item.waktulatihan),
                         style: TextStyle(
                           color: Colors.grey.shade700,
                           fontSize: 14,
@@ -167,7 +172,7 @@ class InterviewTab extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
-                
+
                 Text(
                   'Feedback:',
                   style: TextStyle(
@@ -215,9 +220,9 @@ class InterviewTab extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         '$label: $value',
@@ -235,18 +240,11 @@ class InterviewTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.history,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.history, size: 64, color: Colors.grey.shade400),
           SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
         ],
       ),

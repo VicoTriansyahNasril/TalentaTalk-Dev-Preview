@@ -1,3 +1,4 @@
+import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'data/similar_phoneme_pairs.dart';
@@ -25,10 +26,7 @@ class ExamPhonemeScreen extends StatelessWidget {
           elevation: 0,
           iconTheme: const IconThemeData(color: Colors.black87),
           bottom: TabBar(
-            tabs: const [
-              Tab(text: 'Vowels'),
-              Tab(text: 'Consonants'),
-            ],
+            tabs: const [Tab(text: 'Vowels'), Tab(text: 'Consonants')],
             labelColor: Colors.blue[700],
             unselectedLabelColor: Colors.grey[600],
             indicatorColor: Colors.blue[700],
@@ -45,7 +43,10 @@ class ExamPhonemeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPhonemeList(List<SimilarPhonemePair> pairs, BuildContext context) {
+  Widget _buildPhonemeList(
+    List<SimilarPhonemePair> pairs,
+    BuildContext context,
+  ) {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: pairs.length,
@@ -58,15 +59,15 @@ class ExamPhonemeScreen extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             elevation: 2,
-            shadowColor: Colors.black.withOpacity(0.1),
+            shadowColor: Colors.black.withValues(alpha: 0.1),
             child: InkWell(
               onTap: () {
-                print('Navigating to exam with phonemes: ${pair.phonemes.join(', ')}');
+                dev.log(
+                  'Navigating to exam with phonemes: ${pair.phonemes.join(', ')}',
+                );
                 context.pushNamed(
                   'exam_material',
-                  queryParameters: {
-                    'phonemes': pair.phonemes.join(','),
-                  },
+                  queryParameters: {'phonemes': pair.phonemes.join(',')},
                 );
               },
               borderRadius: BorderRadius.circular(16),
@@ -87,7 +88,10 @@ class ExamPhonemeScreen extends StatelessWidget {
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [Colors.orange[100]!, Colors.orange[50]!],
@@ -130,10 +134,10 @@ class ExamPhonemeScreen extends StatelessWidget {
 
   Widget _buildPhonemeRow(SimilarPhonemePair pair) {
     List<Widget> phonemeBoxes = [];
-    
+
     for (int i = 0; i < pair.phonemes.length; i++) {
       phonemeBoxes.add(_phonemeBox(pair.phonemes[i], pair.examples[i]));
-      
+
       if (i < pair.phonemes.length - 1) {
         phonemeBoxes.add(const SizedBox(width: 12));
         phonemeBoxes.add(
@@ -154,9 +158,7 @@ class ExamPhonemeScreen extends StatelessWidget {
       }
     }
 
-    return Row(
-      children: phonemeBoxes,
-    );
+    return Row(children: phonemeBoxes);
   }
 
   Widget _phonemeBox(String phoneme, String example) {

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class PhonemeResult {
@@ -139,9 +138,10 @@ class PronunciationResultDialog extends StatelessWidget {
   }
 
   Widget _buildAccuracyMeter(double percent) {
-    final Color meterColor = percent >= 80
-        ? Colors.green
-        : percent >= 60
+    final Color meterColor =
+        percent >= 80
+            ? Colors.green
+            : percent >= 60
             ? Colors.orange
             : Colors.red;
 
@@ -168,10 +168,7 @@ class PronunciationResultDialog extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           _getAccuracyMessage(percent),
-          style: TextStyle(
-            color: meterColor,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: meterColor, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -181,29 +178,25 @@ class PronunciationResultDialog extends StatelessWidget {
     final bool isUnderstandable = percent >= 70;
     final Color indicatorColor = isUnderstandable ? Colors.green : Colors.red;
     final IconData icon = isUnderstandable ? Icons.check_circle : Icons.cancel;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: indicatorColor.withOpacity(0.1),
+        color: indicatorColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: indicatorColor.withOpacity(0.3),
+          color: indicatorColor.withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: indicatorColor,
-            size: 20,
-          ),
+          Icon(icon, color: indicatorColor, size: 20),
           const SizedBox(width: 8),
           Flexible(
             child: Text(
-              isUnderstandable 
+              isUnderstandable
                   ? "Dapat dipahami oleh native speaker"
                   : "Kurang dapat dipahami oleh native speaker",
               style: TextStyle(
@@ -241,9 +234,10 @@ class PronunciationResultDialog extends StatelessWidget {
             spacing: 2,
             runSpacing: 6,
             alignment: WrapAlignment.center,
-            children: phonemeComparison.map((result) {
-              return _buildPhonemeComparison(result);
-            }).toList(),
+            children:
+                phonemeComparison.map((result) {
+                  return _buildPhonemeComparison(result);
+                }).toList(),
           ),
         ),
       ),
@@ -278,7 +272,7 @@ class PronunciationResultDialog extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: backgroundColor.withOpacity(0.7),
+          color: backgroundColor.withValues(alpha: 0.7),
           width: 1,
         ),
       ),

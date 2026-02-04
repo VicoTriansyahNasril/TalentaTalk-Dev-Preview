@@ -1,4 +1,4 @@
-// conversation_repository.dart
+import 'dart:developer' as dev;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../service/conversation_service.dart';
 import '../model/report_result.dart';
@@ -13,19 +13,21 @@ class ConversationRepository {
       service.sendMessage(userInput, duration);
 
   // New method for audio transcription
-  Future<String> transcribeAudio(String audioPath) => 
+  Future<String> transcribeAudio(String audioPath) =>
       service.transcribeAudio(audioPath);
 
   Future<Map<String, dynamic>> fetchReport() async {
     try {
       final token = await _getToken();
       final data = await service.fetchReport(token);
-      
+
       // Handle the actual API response structure
-      final reportList = (data['report'] as List?)
-          ?.map((e) => ReportResult.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [];
-      
+      final reportList =
+          (data['report'] as List?)
+              ?.map((e) => ReportResult.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [];
+
       return {
         'report': reportList,
         'saveStatus': {
@@ -36,7 +38,7 @@ class ConversationRepository {
         'talentId': data['talent_id'] ?? 0,
       };
     } catch (e) {
-      print('Error in fetchReport: $e');
+      dev.log('Error in fetchReport: $e');
       return {
         'report': <ReportResult>[],
         'saveStatus': {

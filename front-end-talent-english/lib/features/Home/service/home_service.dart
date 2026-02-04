@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants.dart';
@@ -11,14 +12,12 @@ class HomeService {
 
     final response = await http.get(
       Uri.parse('${Env.baseUrl}/home/summary'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    
+    dev.log('Response status: ${response.statusCode}');
+    dev.log('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       return HomeSummary.fromJson(jsonData);
@@ -28,7 +27,9 @@ class HomeService {
         final errorMessage = errorData['detail'] ?? 'Token expired';
         throw Exception('403: $errorMessage');
       } catch (e) {
-        throw Exception('403: Could not validate token: Signature has expired.');
+        throw Exception(
+          '403: Could not validate token: Signature has expired.',
+        );
       }
     } else {
       throw Exception('Failed to load home summary: ${response.statusCode}');

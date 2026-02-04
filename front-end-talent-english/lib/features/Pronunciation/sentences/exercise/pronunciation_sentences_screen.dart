@@ -12,19 +12,22 @@ class PronunciationSentencesScreen extends StatefulWidget {
   const PronunciationSentencesScreen({super.key, required this.idMaterial});
 
   @override
-  State<PronunciationSentencesScreen> createState() => _PronunciationSentencesScreenState();
+  State<PronunciationSentencesScreen> createState() =>
+      _PronunciationSentencesScreenState();
 }
 
-class _PronunciationSentencesScreenState extends State<PronunciationSentencesScreen> {
+class _PronunciationSentencesScreenState
+    extends State<PronunciationSentencesScreen> {
   bool _resultDialogShown = false;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PronunciationSentencesBloc(
-        baseUrl: Env.baseUrl,
-        ttsService: TtsService(),
-      )..add(FetchSentenceById(widget.idMaterial)),
+      create:
+          (_) => PronunciationSentencesBloc(
+            baseUrl: Env.baseUrl,
+            ttsService: TtsService(),
+          )..add(FetchSentenceById(widget.idMaterial)),
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Pronunciation Sentences"),
@@ -34,32 +37,40 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: BlocConsumer<PronunciationSentencesBloc, PronunciationSentencesState>(
-            listener: (context, state) {
+          child: BlocConsumer<
+            PronunciationSentencesBloc,
+            PronunciationSentencesState
+          >(
+            listener: (context, state) async {
               if (state.errorMessage.isNotEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
               }
-              
-              if (!state.isRecording && state.phonemeResults.isNotEmpty && !_resultDialogShown) {
+
+              if (!state.isRecording &&
+                  state.phonemeResults.isNotEmpty &&
+                  !_resultDialogShown) {
                 _resultDialogShown = true;
-                
-                Future.delayed(Duration.zero, () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => PronunciationResultDialog(
-                      accuracyPercent: state.score * 100,
-                      phonemeComparison: state.phonemeResults,
-                      targetPhrase: state.phrase,
-                    ),
-                    barrierDismissible: false,
-                  ).then((_) {
-                    _resultDialogShown = false;
-                    
-                    context.read<PronunciationSentencesBloc>().add(ClearResults());
-                  });
-                });
+                await Future.delayed(Duration.zero);
+
+                if (!context.mounted) return;
+
+                await showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder:
+                      (context) => PronunciationResultDialog(
+                        accuracyPercent: state.score * 100,
+                        phonemeComparison: state.phonemeResults,
+                        targetPhrase: state.phrase,
+                      ),
+                );
+
+                if (!context.mounted) return;
+
+                _resultDialogShown = false;
+                context.read<PronunciationSentencesBloc>().add(ClearResults());
               }
             },
             builder: (context, state) {
@@ -82,12 +93,14 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                       child: Center(
                         child: Text(
                           error,
-                          style: const TextStyle(color: Colors.red, fontSize: 16),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
                     )
-
                   else if (phrase.isNotEmpty)
                     Expanded(
                       child: SingleChildScrollView(
@@ -114,13 +127,15 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   phrase,
@@ -133,13 +148,18 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                                                 ),
                                                 const SizedBox(height: 12),
                                                 Container(
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 6,
-                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 6,
+                                                      ),
                                                   decoration: BoxDecoration(
-                                                    color: Colors.white.withOpacity(0.2),
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    color: Colors.white
+                                                        .withValues(alpha: 0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
                                                   ),
                                                   child: Text(
                                                     ipa,
@@ -155,8 +175,11 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                                           ),
                                           Container(
                                             decoration: BoxDecoration(
-                                              color: Colors.white.withOpacity(0.2),
-                                              borderRadius: BorderRadius.circular(50),
+                                              color: Colors.white.withValues(
+                                                alpha: 0.2,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
                                             ),
                                             child: IconButton(
                                               icon: const Icon(
@@ -166,7 +189,9 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                                               ),
                                               onPressed: () {
                                                 context
-                                                    .read<PronunciationSentencesBloc>()
+                                                    .read<
+                                                      PronunciationSentencesBloc
+                                                    >()
                                                     .add(PlayTts(phrase));
                                               },
                                             ),
@@ -216,7 +241,9 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: Colors.blue[50],
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
                                           child: Icon(
                                             Icons.tips_and_updates,
@@ -266,9 +293,14 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                                 child: Column(
                                   children: [
                                     Icon(
-                                      state.isRecording ? Icons.mic : Icons.mic_outlined,
+                                      state.isRecording
+                                          ? Icons.mic
+                                          : Icons.mic_outlined,
                                       size: 32,
-                                      color: state.isRecording ? Colors.red : Colors.blue,
+                                      color:
+                                          state.isRecording
+                                              ? Colors.red
+                                              : Colors.blue,
                                     ),
                                     const SizedBox(height: 12),
                                     Text(
@@ -284,16 +316,29 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                                     ),
                                     const SizedBox(height: 16),
                                     FloatingActionButton.large(
-                                      backgroundColor: state.isRecording ? Colors.red : Colors.blue,
+                                      backgroundColor:
+                                          state.isRecording
+                                              ? Colors.red
+                                              : Colors.blue,
                                       elevation: 4,
                                       child: Icon(
-                                        state.isRecording ? Icons.stop : Icons.mic,
+                                        state.isRecording
+                                            ? Icons.stop
+                                            : Icons.mic,
                                         size: 32,
                                         color: Colors.white,
                                       ),
                                       onPressed: () {
-                                        final bloc = context.read<PronunciationSentencesBloc>();
-                                        bloc.add(state.isRecording ? StopRecording() : StartRecording());
+                                        final bloc =
+                                            context
+                                                .read<
+                                                  PronunciationSentencesBloc
+                                                >();
+                                        bloc.add(
+                                          state.isRecording
+                                              ? StopRecording()
+                                              : StartRecording(),
+                                        );
                                       },
                                     ),
                                   ],
@@ -303,7 +348,6 @@ class _PronunciationSentencesScreenState extends State<PronunciationSentencesScr
                         ),
                       ),
                     )
-
                   else
                     const Expanded(
                       child: Center(

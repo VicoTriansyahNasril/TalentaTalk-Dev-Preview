@@ -5,25 +5,21 @@ class TrainingCard extends StatelessWidget {
   final PronunciationTraining training;
   final VoidCallback onTap;
 
-  const TrainingCard({
-    super.key,
-    required this.training,
-    required this.onTap,
-  });
+  const TrainingCard({super.key, required this.training, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      shadowColor: training.color.withOpacity(0.4),
+      shadowColor: training.color.withValues(alpha: 0.4),
       color: training.color,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        splashColor: Colors.white.withOpacity(0.1),
-        highlightColor: Colors.white.withOpacity(0.05),
+        splashColor: Colors.white.withValues(alpha: 0.1),
+        highlightColor: Colors.white.withValues(alpha: 0.05),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -31,7 +27,7 @@ class TrainingCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: training.icon,
@@ -44,8 +40,8 @@ class TrainingCard extends StatelessWidget {
                     Text(
                       training.title,
                       style: const TextStyle(
-                        color: Colors.white, 
-                        fontSize: 18, 
+                        color: Colors.white,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -66,7 +62,7 @@ class TrainingCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.arrow_forward, color: Colors.white),

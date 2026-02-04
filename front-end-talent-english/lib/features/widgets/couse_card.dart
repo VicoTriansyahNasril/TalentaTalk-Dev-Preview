@@ -25,7 +25,7 @@ class UnifiedTrainingCard extends StatelessWidget {
     if (progress != null) {
       return progress!;
     }
-    
+
     if (progressText != null && progressText!.isNotEmpty) {
       final parts = progressText!.split('/');
       if (parts.length == 2) {
@@ -44,14 +44,15 @@ class UnifiedTrainingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progressPercentage = _getProgressPercentage();
-    final hasProgress = progress != null || (progressText != null && progressText!.isNotEmpty);
-    
+    final hasProgress =
+        progress != null || (progressText != null && progressText!.isNotEmpty);
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -69,10 +70,7 @@ class UnifiedTrainingCard extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  color,
-                  color.withOpacity(0.8),
-                ],
+                colors: [color, color.withValues(alpha: 0.8)],
               ),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -87,7 +85,7 @@ class UnifiedTrainingCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: IconTheme(
@@ -112,7 +110,7 @@ class UnifiedTrainingCard extends StatelessWidget {
                             ),
                           ),
                           progressColor: Colors.white,
-                          backgroundColor: Colors.white.withOpacity(0.2),
+                          backgroundColor: Colors.white.withValues(alpha: 0.2),
                         ),
                     ],
                   ),
@@ -129,7 +127,7 @@ class UnifiedTrainingCard extends StatelessWidget {
                   Text(
                     subtitle,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 14,
                     ),
                   ),
@@ -138,7 +136,7 @@ class UnifiedTrainingCard extends StatelessWidget {
                     Text(
                       "Progress: $progressText",
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14,
                       ),
                     ),
@@ -157,9 +155,7 @@ class UnifiedTrainingCard extends StatelessWidget {
                     ),
                     child: const Text(
                       "Start Learning",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

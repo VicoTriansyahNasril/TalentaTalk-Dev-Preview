@@ -45,23 +45,19 @@ class InstructionScreen extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      primaryColor.withOpacity(0.1),
-                      primaryColor.withOpacity(0.05),
+                      primaryColor.withValues(alpha: 0.1),
+                      primaryColor.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: primaryColor.withOpacity(0.2),
+                    color: primaryColor.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      headerIcon,
-                      size: 48,
-                      color: primaryColor,
-                    ),
+                    Icon(headerIcon, size: 48, color: primaryColor),
                     const SizedBox(height: 16),
                     Text(
                       title,
@@ -75,10 +71,7 @@ class InstructionScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       subtitle,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
                     if (estimatedTime != null) ...[
@@ -89,7 +82,7 @@ class InstructionScreen extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: primaryColor.withOpacity(0.1),
+                          color: primaryColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -116,9 +109,9 @@ class InstructionScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               Text(
                 "Instructions:",
                 style: TextStyle(
@@ -127,9 +120,9 @@ class InstructionScreen extends StatelessWidget {
                   color: Colors.grey[800],
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               Expanded(
                 child: ListView.builder(
                   itemCount: instructions.length,
@@ -158,9 +151,9 @@ class InstructionScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          
+
                           const SizedBox(width: 16),
-                          
+
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,9 +199,9 @@ class InstructionScreen extends StatelessWidget {
                   },
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               if (instructions.any((i) => i.isImportant)) ...[
                 Container(
                   width: double.infinity,
@@ -216,10 +209,7 @@ class InstructionScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.orange[50],
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.orange[200]!,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.orange[200]!, width: 1),
                   ),
                   child: Row(
                     children: [
@@ -244,7 +234,7 @@ class InstructionScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
               ],
-              
+
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -254,7 +244,7 @@ class InstructionScreen extends StatelessWidget {
                     backgroundColor: primaryColor,
                     foregroundColor: Colors.white,
                     elevation: 2,
-                    shadowColor: primaryColor.withOpacity(0.3),
+                    shadowColor: primaryColor.withValues(alpha: 0.3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -270,10 +260,7 @@ class InstructionScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Icon(
-                        Icons.arrow_forward,
-                        size: 20,
-                      ),
+                      const Icon(Icons.arrow_forward, size: 20),
                     ],
                   ),
                 ),

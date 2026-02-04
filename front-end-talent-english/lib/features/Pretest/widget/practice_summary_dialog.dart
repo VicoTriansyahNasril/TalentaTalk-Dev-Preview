@@ -30,11 +30,7 @@ class PracticeSummaryDialog extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.emoji_events,
-                    color: scoreColor,
-                    size: 28,
-                  ),
+                  Icon(Icons.emoji_events, color: scoreColor, size: 28),
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
@@ -54,7 +50,7 @@ class PracticeSummaryDialog extends StatelessWidget {
                 height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: scoreColor.withOpacity(0.1),
+                  color: scoreColor.withValues(alpha: 0.1),
                   border: Border.all(color: scoreColor, width: 4),
                 ),
                 child: Center(
@@ -71,10 +67,7 @@ class PracticeSummaryDialog extends StatelessWidget {
                       ),
                       const Text(
                         "Average",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -124,13 +117,10 @@ class PracticeSummaryDialog extends StatelessWidget {
 
               const Text(
                 "Detailed Results",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              
+
               Flexible(
                 child: Container(
                   constraints: const BoxConstraints(maxHeight: 200),
@@ -147,9 +137,14 @@ class PracticeSummaryDialog extends StatelessWidget {
                       return Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          border: index < completedSentences.length - 1
-                              ? Border(bottom: BorderSide(color: Colors.grey[200]!))
-                              : null,
+                          border:
+                              index < completedSentences.length - 1
+                                  ? Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey[200]!,
+                                    ),
+                                  )
+                                  : null,
                         ),
                         child: Row(
                           children: [
@@ -157,8 +152,12 @@ class PracticeSummaryDialog extends StatelessWidget {
                               width: 30,
                               height: 30,
                               decoration: BoxDecoration(
-                                color: _getScoreColor(scorePercent).withOpacity(0.1),
-                                border: Border.all(color: _getScoreColor(scorePercent)),
+                                color: _getScoreColor(
+                                  scorePercent,
+                                ).withValues(alpha: 0.1),
+                                border: Border.all(
+                                  color: _getScoreColor(scorePercent),
+                                ),
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Center(
@@ -173,7 +172,7 @@ class PracticeSummaryDialog extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            
+
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,14 +197,16 @@ class PracticeSummaryDialog extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            
+
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: _getScoreColor(scorePercent).withOpacity(0.1),
+                                color: _getScoreColor(
+                                  scorePercent,
+                                ).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -232,14 +233,14 @@ class PracticeSummaryDialog extends StatelessWidget {
                   TextButton.icon(
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Share feature coming soon!")),
+                        const SnackBar(
+                          content: Text("Share feature coming soon!"),
+                        ),
                       );
                     },
                     icon: const Icon(Icons.share),
                     label: const Text("Share"),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue,
-                    ),
+                    style: TextButton.styleFrom(foregroundColor: Colors.blue),
                   ),
                   ElevatedButton.icon(
                     onPressed: onClose,
@@ -266,25 +267,15 @@ class PracticeSummaryDialog extends StatelessWidget {
   Widget _buildStatItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: Colors.blue,
-          size: 20,
-        ),
+        Icon(icon, color: Colors.blue, size: 20),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 10,
-            color: Colors.grey,
-          ),
+          style: const TextStyle(fontSize: 10, color: Colors.grey),
           textAlign: TextAlign.center,
         ),
       ],

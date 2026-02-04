@@ -1,4 +1,3 @@
-// conversation_service.dart
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -31,15 +30,14 @@ class ConversationService {
 
   Future<String> transcribeAudio(String audioPath) async {
     try {
-      
       final file = File(audioPath);
-      
+
       if (!file.existsSync()) {
         throw Exception('Audio file not found at: $audioPath');
       }
 
       final fileSize = await file.length();
-      
+
       if (fileSize == 0) {
         throw Exception('Audio file is empty (0 bytes)');
       }
@@ -55,18 +53,16 @@ class ConversationService {
         Uri.parse('$baseUrl/transcribe'),
       );
 
-      request.headers.addAll({
-        'Accept': 'application/json',
-      });
+      request.headers.addAll({'Accept': 'application/json'});
 
       final multipartFile = await http.MultipartFile.fromPath(
         'file',
         audioPath,
         filename: audioPath.split('/').last,
       );
-      
+
       request.files.add(multipartFile);
-      
+
       final streamedResponse = await request.send().timeout(
         const Duration(seconds: 30),
         onTimeout: () {
@@ -74,43 +70,45 @@ class ConversationService {
         },
       );
 
-
       final response = await http.Response.fromStream(streamedResponse);
-      
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        
+
         String transcribedText = '';
         if (data is Map<String, dynamic>) {
-          transcribedText = data['text'] ?? 
-                           data['transcript'] ?? 
-                           data['transcription'] ?? 
-                           data['result'] ?? '';
+          transcribedText =
+              data['text'] ??
+              data['transcript'] ??
+              data['transcription'] ??
+              data['result'] ??
+              '';
         } else if (data is String) {
           transcribedText = data;
         }
-        
+
         if (transcribedText.isEmpty) {
           return 'Audio could not be transcribed';
         }
-        
+
         return transcribedText;
       } else {
-        String errorMessage = 'Failed to transcribe audio: ${response.statusCode}';
-        
+        String errorMessage =
+            'Failed to transcribe audio: ${response.statusCode}';
+
         try {
           final errorData = json.decode(response.body);
-          if (errorData is Map<String, dynamic> && errorData.containsKey('error')) {
+          if (errorData is Map<String, dynamic> &&
+              errorData.containsKey('error')) {
             errorMessage += ' - ${errorData['error']}';
           }
-        } catch (e) {
+        } catch (_) {
+          // Ignored
         }
-        
+
         throw Exception(errorMessage);
       }
     } catch (e) {
-      
       if (e is Exception) {
         rethrow;
       } else {
@@ -122,9 +120,7 @@ class ConversationService {
   Future<Map<String, dynamic>> fetchReport(String token) async {
     final res = await http.get(
       Uri.parse('$baseUrl/conversation/report'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
     if (res.statusCode == 200) {
       return json.decode(res.body);

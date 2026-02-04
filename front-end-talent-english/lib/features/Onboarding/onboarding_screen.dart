@@ -72,11 +72,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Color(0xFFEBF4FF),
-              Color(0xFFDBEAFE),
-            ],
+            colors: [Colors.white, Color(0xFFEBF4FF), Color(0xFFDBEAFE)],
           ),
         ),
         child: SafeArea(
@@ -128,7 +124,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   ],
                 ),
               ),
-              
+
               Expanded(
                 child: PageView(
                   controller: _pageController,
@@ -146,7 +142,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   ],
                 ),
               ),
-              
+
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
@@ -166,9 +162,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         width: _currentIndex == index ? 32 : 12,
                         height: 12,
                         decoration: BoxDecoration(
-                          color: _currentIndex == index
-                              ? const Color(0xFF2563EB)
-                              : const Color(0xFF93C5FD),
+                          color:
+                              _currentIndex == index
+                                  ? const Color(0xFF2563EB)
+                                  : const Color(0xFF93C5FD),
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
@@ -176,7 +173,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   }),
                 ),
               ),
-              
+
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
@@ -187,20 +184,30 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       icon: const Icon(Icons.chevron_left),
                       label: const Text('Back'),
                       style: TextButton.styleFrom(
-                        foregroundColor: _currentIndex > 0
-                            ? const Color(0xFF2563EB)
-                            : Colors.grey,
+                        foregroundColor:
+                            _currentIndex > 0
+                                ? const Color(0xFF2563EB)
+                                : Colors.grey,
                       ),
                     ),
-                    
+
                     ElevatedButton.icon(
                       onPressed: _nextPage,
-                      icon: Icon(_currentIndex == 2 ? Icons.play_arrow : Icons.chevron_right),
-                      label: Text(_currentIndex == 2 ? 'Start Pretest' : 'Next'),
+                      icon: Icon(
+                        _currentIndex == 2
+                            ? Icons.play_arrow
+                            : Icons.chevron_right,
+                      ),
+                      label: Text(
+                        _currentIndex == 2 ? 'Start Pretest' : 'Next',
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2563EB),
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -238,8 +245,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF3B82F6).withOpacity(0.2),
-                          const Color(0xFF1D4ED8).withOpacity(0.1),
+                          const Color(0xFF3B82F6).withValues(alpha: 0.2),
+                          const Color(0xFF1D4ED8).withValues(alpha: 0.1),
                         ],
                       ),
                     ),
@@ -255,7 +262,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               },
             ),
             const SizedBox(height: 40),
-            
+
             const Text(
               'Welcome',
               style: TextStyle(
@@ -265,7 +272,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
+
             const Text(
               'TalentaTalk helps you practice English pronunciation and conversation with clear, structured exercises.',
               textAlign: TextAlign.center,
@@ -305,7 +312,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
             const SizedBox(height: 40),
-            
+
             const Text(
               'What You Can Do',
               style: TextStyle(
@@ -315,7 +322,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
+
             const Text(
               'Practice phonemes, take conversation exercises, and review your progress over time.',
               textAlign: TextAlign.center,
@@ -345,7 +352,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -354,11 +361,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  icon,
-                  size: 32,
-                  color: const Color(0xFF3B82F6),
-                ),
+                Icon(icon, size: 32, color: const Color(0xFF3B82F6)),
                 const SizedBox(height: 8),
                 Text(
                   title,
@@ -398,7 +401,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
@@ -436,15 +439,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(3, (index) {
                             return TweenAnimationBuilder<double>(
-                              duration: Duration(milliseconds: 400 + (index * 100)),
+                              duration: Duration(
+                                milliseconds: 400 + (index * 100),
+                              ),
                               tween: Tween(begin: 0.0, end: 1.0),
                               builder: (context, value, child) {
                                 return Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 2),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 2,
+                                  ),
                                   width: 8,
                                   height: 8,
                                   decoration: BoxDecoration(
-                                    color: Color(0xFF93C5FD).withOpacity(value),
+                                    color: const Color(
+                                      0xFF93C5FD,
+                                    ).withValues(alpha: value),
                                     shape: BoxShape.circle,
                                   ),
                                 );
@@ -459,7 +468,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               },
             ),
             const SizedBox(height: 40),
-            
+
             const Text(
               'Let\'s Get Started',
               style: TextStyle(
@@ -469,7 +478,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
             const SizedBox(height: 16),
-            
+
             const Text(
               'Take a short pretest to begin your learning and help set your starting point.',
               textAlign: TextAlign.center,

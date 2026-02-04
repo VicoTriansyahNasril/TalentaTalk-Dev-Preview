@@ -38,11 +38,7 @@ class PhonemeCategoryScreen extends StatelessWidget {
             color: Colors.blue[100],
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: Colors.blue[700],
-          ),
+          child: Icon(icon, size: 20, color: Colors.blue[700]),
         ),
         const SizedBox(width: 12),
         Text(
@@ -74,7 +70,7 @@ class PhonemeCategoryScreen extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           elevation: 2,
-          shadowColor: Colors.black.withOpacity(0.1),
+          shadowColor: Colors.black.withValues(alpha: 0.1),
           child: InkWell(
             onTap: () {
               final cleanPhoneme = phoneme.phoneme.replaceAll('/', '');

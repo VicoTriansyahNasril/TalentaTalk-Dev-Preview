@@ -22,24 +22,32 @@ class ChatMessageWidget extends StatelessWidget {
           child: Opacity(
             opacity: value,
             child: Align(
-              alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+              alignment:
+                  message.isUser ? Alignment.centerRight : Alignment.centerLeft,
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
                 decoration: BoxDecoration(
-                  gradient: message.isUser 
-                    ? LinearGradient(
-                        colors: [Colors.blue.shade600, Colors.blue.shade700],
-                      )
-                    : null,
+                  gradient:
+                      message.isUser
+                          ? LinearGradient(
+                            colors: [
+                              Colors.blue.shade600,
+                              Colors.blue.shade700,
+                            ],
+                          )
+                          : null,
                   color: message.isUser ? null : Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),

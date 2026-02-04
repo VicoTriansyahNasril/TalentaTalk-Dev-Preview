@@ -6,10 +6,7 @@ import 'model/exam_history.dart';
 class ExamTab extends StatelessWidget {
   final List<ExamHistory> history;
 
-  const ExamTab({
-    super.key,
-    required this.history,
-  });
+  const ExamTab({super.key, required this.history});
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +51,17 @@ class ExamTab extends StatelessWidget {
                   SizedBox(height: 8),
                   Row(
                     children: [
-                      _buildScoreChip('Total Score', item.nilaiTotal, Colors.blue),
+                      _buildScoreChip(
+                        'Total Score',
+                        item.nilaiTotal,
+                        Colors.blue,
+                      ),
                       SizedBox(width: 8),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
@@ -73,7 +77,9 @@ class ExamTab extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          DateFormat('dd MMM yyyy, HH:mm').format(item.waktuujian),
+                          DateFormat(
+                            'dd MMM yyyy, HH:mm',
+                          ).format(item.waktuujian),
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -111,10 +117,7 @@ class ExamTab extends StatelessWidget {
               Icon(Icons.quiz, color: Colors.blue.shade600),
               SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  'Exam Details',
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: Text('Exam Details', style: TextStyle(fontSize: 18)),
               ),
             ],
           ),
@@ -144,15 +147,12 @@ class ExamTab extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 4),
-                        Text(
-                          item.kategori,
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        Text(item.kategori, style: TextStyle(fontSize: 16)),
                       ],
                     ),
                   ),
                   SizedBox(height: 16),
-                  
+
                   Row(
                     children: [
                       Expanded(
@@ -219,7 +219,7 @@ class ExamTab extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 16),
-                  
+
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(8),
@@ -229,10 +229,16 @@ class ExamTab extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.access_time, size: 16, color: Colors.grey.shade600),
+                        Icon(
+                          Icons.access_time,
+                          size: 16,
+                          color: Colors.grey.shade600,
+                        ),
                         SizedBox(width: 8),
                         Text(
-                          DateFormat('dd MMMM yyyy, HH:mm').format(item.waktuujian),
+                          DateFormat(
+                            'dd MMMM yyyy, HH:mm',
+                          ).format(item.waktuujian),
                           style: TextStyle(
                             color: Colors.grey.shade700,
                             fontSize: 14,
@@ -242,7 +248,7 @@ class ExamTab extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16),
-                  
+
                   Text(
                     'Question Details:',
                     style: TextStyle(
@@ -252,7 +258,7 @@ class ExamTab extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 8),
-                  
+
                   if (item.details.isNotEmpty)
                     Container(
                       width: double.infinity,
@@ -277,7 +283,9 @@ class ExamTab extends StatelessWidget {
                                   flex: 1,
                                   child: Text(
                                     '#',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -285,7 +293,9 @@ class ExamTab extends StatelessWidget {
                                   flex: 4,
                                   child: Text(
                                     'Question',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -293,7 +303,9 @@ class ExamTab extends StatelessWidget {
                                   flex: 2,
                                   child: Text(
                                     'Score',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -307,7 +319,10 @@ class ExamTab extends StatelessWidget {
                               padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 border: Border(
-                                  top: BorderSide(color: Colors.grey.shade300, width: 0.5),
+                                  top: BorderSide(
+                                    color: Colors.grey.shade300,
+                                    width: 0.5,
+                                  ),
                                 ),
                               ),
                               child: Row(
@@ -326,7 +341,9 @@ class ExamTab extends StatelessWidget {
                                   Expanded(
                                     flex: 4,
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 4),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
                                       child: Text(
                                         detail.kalimat,
                                         style: TextStyle(fontSize: 14),
@@ -336,7 +353,10 @@ class ExamTab extends StatelessWidget {
                                   Expanded(
                                     flex: 2,
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: _getScoreColor(detail.nilai),
                                         borderRadius: BorderRadius.circular(4),
@@ -409,9 +429,9 @@ class ExamTab extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         '$label: $value',
@@ -429,18 +449,11 @@ class ExamTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.quiz,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.quiz, size: 64, color: Colors.grey.shade400),
           SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
         ],
       ),

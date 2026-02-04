@@ -12,17 +12,20 @@ class PracticePronunciationScreen extends StatefulWidget {
   const PracticePronunciationScreen({super.key});
 
   @override
-  State<PracticePronunciationScreen> createState() => _PracticePronunciationScreenState();
+  State<PracticePronunciationScreen> createState() =>
+      _PracticePronunciationScreenState();
 }
 
-class _PracticePronunciationScreenState extends State<PracticePronunciationScreen> {
+class _PracticePronunciationScreenState
+    extends State<PracticePronunciationScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PracticePronunciationBloc(
-        baseUrl: Env.baseUrl,
-        ttsService: TtsService(),
-      )..add(FetchPracticeSentences()),
+      create:
+          (_) => PracticePronunciationBloc(
+            baseUrl: Env.baseUrl,
+            ttsService: TtsService(),
+          )..add(FetchPracticeSentences()),
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Pronunciation Pretest"),
@@ -32,26 +35,34 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: BlocConsumer<PracticePronunciationBloc, PracticePronunciationState>(
-            listener: (context, state) {
+          child: BlocConsumer<
+            PracticePronunciationBloc,
+            PracticePronunciationState
+          >(
+            listener: (context, state) async {
               if (state.errorMessage.isNotEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
               }
-              
+
               if (state.shouldNavigateToSummary) {
-                Navigator.of(context).push(
+                await Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => PracticeSummaryScreen(
-                      averageScore: state.averageScore,
-                      completedSentences: state.completedSentences,
-                    ),
+                    builder:
+                        (context) => PracticeSummaryScreen(
+                          averageScore: state.averageScore,
+                          completedSentences: state.completedSentences,
+                        ),
                   ),
-                ).then((_) {
-                  context.read<PracticePronunciationBloc>().add(CloseFinalSummary());
-                  context.go('/home');
-                });
+                );
+
+                if (!context.mounted) return;
+
+                context.read<PracticePronunciationBloc>().add(
+                  CloseFinalSummary(),
+                );
+                context.go('/home');
               }
             },
             builder: (context, state) {
@@ -64,16 +75,13 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                       SizedBox(height: 16),
                       Text(
                         "Loading practice sentences...",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],
                   ),
                 );
               }
-              
+
               if (state.sentences.isEmpty) {
                 return Center(
                   child: Column(
@@ -92,8 +100,9 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: () {
-                          context.read<PracticePronunciationBloc>()
-                              .add(FetchPracticeSentences());
+                          context.read<PracticePronunciationBloc>().add(
+                            FetchPracticeSentences(),
+                          );
                         },
                         icon: const Icon(Icons.refresh),
                         label: const Text("Retry"),
@@ -106,15 +115,15 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                   ),
                 );
               }
-              
+
               final currentIndex = state.currentIndex;
               final totalSentences = state.sentences.length;
               final currentSentence = state.currentSentence;
-              
+
               if (currentSentence == null) {
                 return const Center(child: Text("No active sentence"));
               }
-              
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -129,9 +138,12 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: Colors.blue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -149,7 +161,9 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                   LinearProgressIndicator(
                     value: currentIndex / totalSentences,
                     backgroundColor: Colors.grey[300],
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Colors.blue,
+                    ),
                   ),
                   const SizedBox(height: 24),
 
@@ -187,7 +201,8 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                                   children: [
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             currentSentence.content,
@@ -198,16 +213,22 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                                               height: 1.3,
                                             ),
                                           ),
-                                          if (currentSentence.phoneme.isNotEmpty) ...[
+                                          if (currentSentence
+                                              .phoneme
+                                              .isNotEmpty) ...[
                                             const SizedBox(height: 12),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 6,
-                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 6,
+                                                  ),
                                               decoration: BoxDecoration(
-                                                color: Colors.white.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(20),
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                               ),
                                               child: Text(
                                                 currentSentence.phoneme,
@@ -224,7 +245,9 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                                     ),
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
                                         borderRadius: BorderRadius.circular(50),
                                       ),
                                       child: IconButton(
@@ -233,11 +256,22 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                                           color: Colors.white,
                                           size: 28,
                                         ),
-                                        onPressed: state.isRecording || state.isSubmitting ? null : () {
-                                          context.read<PracticePronunciationBloc>().add(
-                                            PlayTts(currentSentence.content)
-                                          );
-                                        },
+                                        onPressed:
+                                            state.isRecording ||
+                                                    state.isSubmitting
+                                                ? null
+                                                : () {
+                                                  context
+                                                      .read<
+                                                        PracticePronunciationBloc
+                                                      >()
+                                                      .add(
+                                                        PlayTts(
+                                                          currentSentence
+                                                              .content,
+                                                        ),
+                                                      );
+                                                },
                                       ),
                                     ),
                                   ],
@@ -284,7 +318,9 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                                         padding: const EdgeInsets.all(6),
                                         decoration: BoxDecoration(
                                           color: Colors.green[50],
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         child: Icon(
                                           Icons.tips_and_updates,
@@ -333,21 +369,28 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
                             child: Column(
                               children: [
                                 Icon(
-                                  state.isRecording ? Icons.mic : Icons.mic_outlined,
+                                  state.isRecording
+                                      ? Icons.mic
+                                      : Icons.mic_outlined,
                                   size: 32,
-                                  color: state.isRecording ? Colors.red : 
-                                         state.isSubmitting ? Colors.orange :
-                                         _hasRecorded(state) ? Colors.green : Colors.blue,
+                                  color:
+                                      state.isRecording
+                                          ? Colors.red
+                                          : state.isSubmitting
+                                          ? Colors.orange
+                                          : _hasRecorded(state)
+                                          ? Colors.green
+                                          : Colors.blue,
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  state.isRecording 
-                                    ? "Recording... Speak now!" 
-                                    : state.isSubmitting
+                                  state.isRecording
+                                      ? "Recording... Speak now!"
+                                      : state.isSubmitting
                                       ? "Processing your recording..."
                                       : _hasRecorded(state)
-                                        ? "Ready for next sentence"
-                                        : "Tap the microphone to start recording",
+                                      ? "Ready for next sentence"
+                                      : "Tap the microphone to start recording",
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey[700],
@@ -377,7 +420,10 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
     return state.completedSentences.length > state.currentIndex;
   }
 
-  Widget _buildActionButton(BuildContext context, PracticePronunciationState state) {
+  Widget _buildActionButton(
+    BuildContext context,
+    PracticePronunciationState state,
+  ) {
     if (state.isRecording) {
       return FloatingActionButton.large(
         backgroundColor: Colors.red,
@@ -388,11 +434,11 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
         },
       );
     }
-    
+
     if (state.isSubmitting) {
       return const CircularProgressIndicator();
     }
-    
+
     if (state.completedSentences.length > state.currentIndex) {
       return ElevatedButton.icon(
         onPressed: () {
@@ -410,7 +456,7 @@ class _PracticePronunciationScreenState extends State<PracticePronunciationScree
         ),
       );
     }
-    
+
     return FloatingActionButton.large(
       backgroundColor: Colors.green,
       elevation: 4,

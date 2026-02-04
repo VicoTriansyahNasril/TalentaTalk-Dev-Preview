@@ -6,11 +6,7 @@ class MaterialItemWidget extends StatelessWidget {
   final MaterialModel material;
   final VoidCallback? onTap;
 
-  const MaterialItemWidget({
-    super.key, 
-    required this.material,
-    this.onTap,  
-  });
+  const MaterialItemWidget({super.key, required this.material, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -19,29 +15,23 @@ class MaterialItemWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          colors: [
-            Colors.white,
-            Colors.blue.shade50,
-          ],
+          colors: [Colors.white, Colors.blue.shade50],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
+            color: Colors.blue.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(
-          color: Colors.blue.withOpacity(0.1),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.1), width: 1),
       ),
       child: Material(
         color: Colors.transparent,
@@ -50,9 +40,7 @@ class MaterialItemWidget extends StatelessWidget {
           onTap: () {
             context.pushNamed(
               'pronunciation_sentence_instruction',
-              pathParameters: {
-                'id': material.id.toString(),
-              },
+              pathParameters: {'id': material.id.toString()},
             );
           },
           child: Padding(

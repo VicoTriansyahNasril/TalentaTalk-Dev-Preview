@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class StatisticsCard extends StatelessWidget {
   final Map<String, dynamic> stats;
 
-  const StatisticsCard({
-    super.key,
-    required this.stats,
-  });
+  const StatisticsCard({super.key, required this.stats});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +29,11 @@ class StatisticsCard extends StatelessWidget {
                   color: Colors.blue.shade100,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.bar_chart, color: Colors.blue.shade700, size: 24),
+                child: Icon(
+                  Icons.bar_chart,
+                  color: Colors.blue.shade700,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               const Expanded(
@@ -48,12 +49,26 @@ class StatisticsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          _buildEnhancedStatRow("Total Answers", "${stats['total_answers'] ?? 0}", Icons.question_answer),
-          _buildEnhancedStatRow("Average WPM", "${stats['average_wpm'] ?? 0}", Icons.speed),
-          _buildEnhancedStatRow("Language Proficiency", 
-            "${stats['overall_grammar_assessment']?['language_proficiency'] ?? 'N/A'}", Icons.language),
-          _buildEnhancedStatRow("Communication Clarity", 
-            "${stats['overall_grammar_assessment']?['communication_clarity'] ?? 'N/A'}", Icons.record_voice_over),
+          _buildEnhancedStatRow(
+            "Total Answers",
+            "${stats['total_answers'] ?? 0}",
+            Icons.question_answer,
+          ),
+          _buildEnhancedStatRow(
+            "Average WPM",
+            "${stats['average_wpm'] ?? 0}",
+            Icons.speed,
+          ),
+          _buildEnhancedStatRow(
+            "Language Proficiency",
+            "${stats['overall_grammar_assessment']?['language_proficiency'] ?? 'N/A'}",
+            Icons.language,
+          ),
+          _buildEnhancedStatRow(
+            "Communication Clarity",
+            "${stats['overall_grammar_assessment']?['communication_clarity'] ?? 'N/A'}",
+            Icons.record_voice_over,
+          ),
         ],
       ),
     );
@@ -68,7 +83,7 @@ class StatisticsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

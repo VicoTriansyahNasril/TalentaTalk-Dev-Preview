@@ -1,17 +1,23 @@
 import 'dart:convert';
+import 'dart:developer' as dev;
 import 'package:http/http.dart' as http;
 import '../model/word_material_model.dart';
 import '../../../../../core/constants.dart';
+
 class WordMaterialService {
   final String baseUrl;
 
   WordMaterialService({this.baseUrl = Env.baseUrl});
 
   Future<List<WordMaterialModel>> fetchWordsByCategory(String category) async {
-    final response = await http.get(Uri.parse('$baseUrl/phoneme/words_by_category/$category'));
-    print("categori $category");
+    final response = await http.get(
+      Uri.parse('$baseUrl/phoneme/words_by_category/$category'),
+    );
+    dev.log("categori $category");
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      final Map<String, dynamic> data = jsonDecode(
+        utf8.decode(response.bodyBytes),
+      );
       final List<dynamic> wordList = data['words'] ?? [];
 
       return wordList.map((json) {

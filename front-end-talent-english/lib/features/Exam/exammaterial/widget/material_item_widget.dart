@@ -8,7 +8,7 @@ class MaterialItemWidget extends StatelessWidget {
   final VoidCallback? onTap;
 
   const MaterialItemWidget({
-    super.key, 
+    super.key,
     required this.material,
     required this.examNumber,
     this.onTap,
@@ -19,17 +19,13 @@ class MaterialItemWidget extends StatelessWidget {
     return Card(
       elevation: 3,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
           context.pushNamed(
             'pronunciation_exam_instruction',
-            pathParameters: {
-              'id': material.id.toString(),
-            },
+            pathParameters: {'id': material.id.toString()},
           );
         },
         child: Padding(
@@ -40,7 +36,10 @@ class MaterialItemWidget extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.blue.shade600,
                       borderRadius: BorderRadius.circular(20),
@@ -63,7 +62,7 @@ class MaterialItemWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               Row(
                 children: [
                   Icon(
@@ -82,7 +81,10 @@ class MaterialItemWidget extends StatelessWidget {
                   ),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.orange.shade100,
                         borderRadius: BorderRadius.circular(8),
@@ -100,7 +102,7 @@ class MaterialItemWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               Row(
                 children: [
                   Icon(
@@ -132,15 +134,5 @@ class MaterialItemWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getAccuracyColor(double accuracy) {
-    if (accuracy >= 0.8) {
-      return Colors.green;
-    } else if (accuracy >= 0.6) {
-      return Colors.orange;
-    } else {
-      return Colors.red;
-    }
   }
 }

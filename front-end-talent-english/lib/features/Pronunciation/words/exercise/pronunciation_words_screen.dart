@@ -12,7 +12,8 @@ class PronunciationWordsScreen extends StatefulWidget {
   const PronunciationWordsScreen({super.key, required this.idMaterial});
 
   @override
-  State<PronunciationWordsScreen> createState() => _PronunciationWordsScreenState();
+  State<PronunciationWordsScreen> createState() =>
+      _PronunciationWordsScreenState();
 }
 
 class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
@@ -21,10 +22,11 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PronunciationWordsBloc(
-        baseUrl: Env.baseUrl,
-        ttsService: TtsService(),
-      )..add(FetchWordById(widget.idMaterial)),
+      create:
+          (_) => PronunciationWordsBloc(
+            baseUrl: Env.baseUrl,
+            ttsService: TtsService(),
+          )..add(FetchWordById(widget.idMaterial)),
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Pronunciation Practice"),
@@ -35,31 +37,38 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: BlocConsumer<PronunciationWordsBloc, PronunciationWordsState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state.errorMessage.isNotEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
               }
 
               if (state.recordingCompleted && !_resultDialogShown) {
                 _resultDialogShown = true;
 
-                Future.delayed(Duration.zero, () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => PronunciationResultDialog(
-                      accuracyPercent: state.score * 100,
-                      phonemeComparison: state.phonemeComparison,
-                      targetPhrase: state.phrase,
-                    ),
-                    barrierDismissible: false,
-                  ).then((_) {
-                    _resultDialogShown = false;
-                    
-                    context.read<PronunciationWordsBloc>().add(ResetRecordingCompleted());
-                  });
-                });
+                // Sync gap
+                await Future.delayed(Duration.zero);
+
+                if (!context.mounted) return;
+
+                await showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder:
+                      (context) => PronunciationResultDialog(
+                        accuracyPercent: state.score * 100,
+                        phonemeComparison: state.phonemeComparison,
+                        targetPhrase: state.phrase,
+                      ),
+                );
+
+                if (!context.mounted) return;
+
+                _resultDialogShown = false;
+                context.read<PronunciationWordsBloc>().add(
+                  ResetRecordingCompleted(),
+                );
               }
             },
             builder: (context, state) {
@@ -84,12 +93,14 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                       child: Center(
                         child: Text(
                           error,
-                          style: const TextStyle(color: Colors.red, fontSize: 16),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ),
                     )
-
                   else if (phrase.isNotEmpty)
                     Expanded(
                       child: SingleChildScrollView(
@@ -116,13 +127,15 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   phrase,
@@ -134,13 +147,18 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                                 ),
                                                 const SizedBox(height: 8),
                                                 Container(
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 4,
-                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 4,
+                                                      ),
                                                   decoration: BoxDecoration(
-                                                    color: Colors.white.withOpacity(0.2),
-                                                    borderRadius: BorderRadius.circular(20),
+                                                    color: Colors.white
+                                                        .withValues(alpha: 0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
                                                   ),
                                                   child: Text(
                                                     ipa,
@@ -156,8 +174,11 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                           ),
                                           Container(
                                             decoration: BoxDecoration(
-                                              color: Colors.white.withOpacity(0.2),
-                                              borderRadius: BorderRadius.circular(50),
+                                              color: Colors.white.withValues(
+                                                alpha: 0.2,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
                                             ),
                                             child: IconButton(
                                               icon: const Icon(
@@ -167,7 +188,9 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                               ),
                                               onPressed: () {
                                                 context
-                                                    .read<PronunciationWordsBloc>()
+                                                    .read<
+                                                      PronunciationWordsBloc
+                                                    >()
                                                     .add(PlayTts(phrase));
                                               },
                                             ),
@@ -182,7 +205,8 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
 
                             const SizedBox(height: 16),
 
-                            if (meaning.isNotEmpty || definition.isNotEmpty) ...[
+                            if (meaning.isNotEmpty ||
+                                definition.isNotEmpty) ...[
                               Row(
                                 children: [
                                   Icon(
@@ -212,7 +236,8 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -220,7 +245,8 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                               padding: const EdgeInsets.all(6),
                                               decoration: BoxDecoration(
                                                 color: Colors.green[50],
-                                                borderRadius: BorderRadius.circular(8),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
                                               child: Icon(
                                                 Icons.translate,
@@ -261,7 +287,8 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -269,7 +296,8 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                               padding: const EdgeInsets.all(6),
                                               decoration: BoxDecoration(
                                                 color: Colors.purple[50],
-                                                borderRadius: BorderRadius.circular(8),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
                                               child: Icon(
                                                 Icons.description_outlined,
@@ -320,9 +348,14 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                 child: Column(
                                   children: [
                                     Icon(
-                                      state.isRecording ? Icons.mic : Icons.mic_outlined,
+                                      state.isRecording
+                                          ? Icons.mic
+                                          : Icons.mic_outlined,
                                       size: 32,
-                                      color: state.isRecording ? Colors.red : Colors.blue,
+                                      color:
+                                          state.isRecording
+                                              ? Colors.red
+                                              : Colors.blue,
                                     ),
                                     const SizedBox(height: 12),
                                     Text(
@@ -338,18 +371,27 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                                     ),
                                     const SizedBox(height: 16),
                                     FloatingActionButton.large(
-                                      backgroundColor: state.isRecording ? Colors.red : Colors.blue,
+                                      backgroundColor:
+                                          state.isRecording
+                                              ? Colors.red
+                                              : Colors.blue,
                                       elevation: 4,
                                       child: Icon(
-                                        state.isRecording ? Icons.stop : Icons.mic,
+                                        state.isRecording
+                                            ? Icons.stop
+                                            : Icons.mic,
                                         size: 32,
                                         color: Colors.white,
                                       ),
                                       onPressed: () {
-                                        final bloc = context.read<PronunciationWordsBloc>();
-                                        bloc.add(state.isRecording
-                                            ? StopRecording()
-                                            : StartRecording());
+                                        final bloc =
+                                            context
+                                                .read<PronunciationWordsBloc>();
+                                        bloc.add(
+                                          state.isRecording
+                                              ? StopRecording()
+                                              : StartRecording(),
+                                        );
                                       },
                                     ),
                                   ],
@@ -359,7 +401,6 @@ class _PronunciationWordsScreenState extends State<PronunciationWordsScreen> {
                         ),
                       ),
                     )
-
                   else
                     const Expanded(
                       child: Center(

@@ -6,10 +6,7 @@ import 'model/conversation_history.dart';
 class ConversationTab extends StatelessWidget {
   final List<ConversationHistory> history;
 
-  const ConversationTab({
-    super.key,
-    required this.history,
-  });
+  const ConversationTab({super.key, required this.history});
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +29,7 @@ class ConversationTab extends StatelessWidget {
               children: [
                 Text(
                   item.topic,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
                 Row(
@@ -44,7 +38,9 @@ class ConversationTab extends StatelessWidget {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        DateFormat('dd MMM yyyy, HH:mm').format(item.waktulatihan),
+                        DateFormat(
+                          'dd MMM yyyy, HH:mm',
+                        ).format(item.waktulatihan),
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 12,
@@ -66,9 +62,9 @@ class ConversationTab extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         '$label: $value',
@@ -86,18 +82,11 @@ class ConversationTab extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.history,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.history, size: 64, color: Colors.grey.shade400),
           SizedBox(height: 16),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
         ],
       ),

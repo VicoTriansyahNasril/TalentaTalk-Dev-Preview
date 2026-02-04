@@ -12,17 +12,19 @@ class ExamPronunciationScreen extends StatefulWidget {
   const ExamPronunciationScreen({super.key, required this.examId});
 
   @override
-  State<ExamPronunciationScreen> createState() => _ExamPronunciationScreenState();
+  State<ExamPronunciationScreen> createState() =>
+      _ExamPronunciationScreenState();
 }
 
 class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PronunciationSentencesBloc(
-        baseUrl: Env.baseUrl,
-        ttsService: TtsService(),
-      )..add(FetchExamSentences(widget.examId)),
+      create:
+          (_) => PronunciationSentencesBloc(
+            baseUrl: Env.baseUrl,
+            ttsService: TtsService(),
+          )..add(FetchExamSentences(widget.examId)),
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Pronunciation Exam"),
@@ -30,38 +32,49 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
           elevation: 0,
           leading: const BackButton(color: Colors.blue),
           actions: [
-            BlocBuilder<PronunciationSentencesBloc, PronunciationSentencesState>(
-              buildWhen: (previous, current) => 
-                previous.isRestarting != current.isRestarting ||
-                previous.sentences != current.sentences,
+            BlocBuilder<
+              PronunciationSentencesBloc,
+              PronunciationSentencesState
+            >(
+              buildWhen:
+                  (previous, current) =>
+                      previous.isRestarting != current.isRestarting ||
+                      previous.sentences != current.sentences,
               builder: (context, state) {
                 if (state.sentences.isEmpty && !state.isLoading) {
                   return const SizedBox.shrink();
                 }
-                
+
                 return Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: state.isRestarting
-                    ? const Padding(
-                        padding: EdgeInsets.all(12.0),
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  child:
+                      state.isRestarting
+                          ? const Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.blue,
+                                ),
+                              ),
+                            ),
+                          )
+                          : IconButton(
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Colors.blue,
+                              size: 24,
+                            ),
+                            onPressed:
+                                () => _showRestartConfirmation(
+                                  context,
+                                  widget.examId,
+                                ),
+                            tooltip: 'Restart Exam',
                           ),
-                        ),
-                      )
-                    : IconButton(
-                        icon: const Icon(
-                          Icons.refresh,
-                          color: Colors.blue,
-                          size: 24,
-                        ),
-                        onPressed: () => _showRestartConfirmation(context, widget.examId),
-                        tooltip: 'Restart Exam',
-                      ),
                 );
               },
             ),
@@ -69,7 +82,10 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: BlocConsumer<PronunciationSentencesBloc, PronunciationSentencesState>(
+          child: BlocConsumer<
+            PronunciationSentencesBloc,
+            PronunciationSentencesState
+          >(
             listener: (context, state) {
               if (state.errorMessage.isNotEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -79,12 +95,14 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                   ),
                 );
               }
-              
+
               if (state.showSessionSummary) {
-                Future.delayed(Duration.zero, () {
+                if (mounted) {
                   context.go('/exam_score/${state.examId}');
-                  context.read<PronunciationSentencesBloc>().add(CloseSessionSummary());
-                });
+                  context.read<PronunciationSentencesBloc>().add(
+                    CloseSessionSummary(),
+                  );
+                }
               }
 
               if (state.justRestarted) {
@@ -95,7 +113,9 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                     duration: Duration(seconds: 2),
                   ),
                 );
-                context.read<PronunciationSentencesBloc>().add(ClearRestartSuccess());
+                context.read<PronunciationSentencesBloc>().add(
+                  ClearRestartSuccess(),
+                );
               }
             },
             builder: (context, state) {
@@ -108,10 +128,7 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                       SizedBox(height: 16),
                       Text(
                         "Loading exam sentences...",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -127,16 +144,13 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                       SizedBox(height: 16),
                       Text(
                         "Restarting exam...",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],
                   ),
                 );
               }
-              
+
               if (state.sentences.isEmpty) {
                 return Center(
                   child: Column(
@@ -155,8 +169,9 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: () {
-                          context.read<PronunciationSentencesBloc>()
-                              .add(FetchExamSentences(widget.examId));
+                          context.read<PronunciationSentencesBloc>().add(
+                            FetchExamSentences(widget.examId),
+                          );
                         },
                         icon: const Icon(Icons.refresh),
                         label: const Text("Retry"),
@@ -169,15 +184,15 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                   ),
                 );
               }
-              
+
               final currentIndex = state.currentIndex;
               final totalSentences = state.sentences.length;
               final currentSentence = state.currentSentence;
-              
+
               if (currentSentence == null) {
                 return const Center(child: Text("No active sentence"));
               }
-              
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -192,9 +207,12 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: Colors.blue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -244,7 +262,8 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                                   children: [
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             currentSentence.content,
@@ -255,16 +274,22 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                                               height: 1.3,
                                             ),
                                           ),
-                                          if (currentSentence.phoneme.isNotEmpty) ...[
+                                          if (currentSentence
+                                              .phoneme
+                                              .isNotEmpty) ...[
                                             const SizedBox(height: 12),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 6,
-                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 6,
+                                                  ),
                                               decoration: BoxDecoration(
-                                                color: Colors.white.withOpacity(0.2),
-                                                borderRadius: BorderRadius.circular(20),
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                               ),
                                               child: Text(
                                                 currentSentence.phoneme,
@@ -281,7 +306,9 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                                     ),
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
                                         borderRadius: BorderRadius.circular(50),
                                       ),
                                       child: IconButton(
@@ -290,11 +317,22 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                                           color: Colors.white,
                                           size: 28,
                                         ),
-                                        onPressed: state.isRecording || state.isSubmitting ? null : () {
-                                          context.read<PronunciationSentencesBloc>().add(
-                                            PlayTts(currentSentence.content)
-                                          );
-                                        },
+                                        onPressed:
+                                            state.isRecording ||
+                                                    state.isSubmitting
+                                                ? null
+                                                : () {
+                                                  context
+                                                      .read<
+                                                        PronunciationSentencesBloc
+                                                      >()
+                                                      .add(
+                                                        PlayTts(
+                                                          currentSentence
+                                                              .content,
+                                                        ),
+                                                      );
+                                                },
                                       ),
                                     ),
                                   ],
@@ -341,7 +379,9 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                                         padding: const EdgeInsets.all(6),
                                         decoration: BoxDecoration(
                                           color: Colors.orange[50],
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         child: Icon(
                                           Icons.assignment,
@@ -390,16 +430,22 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
                             child: Column(
                               children: [
                                 Icon(
-                                  state.isRecording ? Icons.mic : Icons.mic_outlined,
+                                  state.isRecording
+                                      ? Icons.mic
+                                      : Icons.mic_outlined,
                                   size: 32,
-                                  color: state.isRecording ? Colors.red : 
-                                         state.isSubmitting ? Colors.orange : Colors.blue,
+                                  color:
+                                      state.isRecording
+                                          ? Colors.red
+                                          : state.isSubmitting
+                                          ? Colors.orange
+                                          : Colors.blue,
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  state.isRecording 
-                                    ? "Recording... Speak now!" 
-                                    : state.isSubmitting
+                                  state.isRecording
+                                      ? "Recording... Speak now!"
+                                      : state.isSubmitting
                                       ? "Processing your recording..."
                                       : "Tap the microphone to start recording",
                                   style: TextStyle(
@@ -454,7 +500,11 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
-                context.read<PronunciationSentencesBloc>().add(RestartExam(examId));
+                if (context.mounted) {
+                  context.read<PronunciationSentencesBloc>().add(
+                    RestartExam(examId),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
@@ -468,7 +518,10 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
     );
   }
 
-  Widget _buildActionButton(BuildContext context, PronunciationSentencesState state) {
+  Widget _buildActionButton(
+    BuildContext context,
+    PronunciationSentencesState state,
+  ) {
     if (state.isRecording) {
       return FloatingActionButton.large(
         backgroundColor: Colors.red,
@@ -479,11 +532,11 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
         },
       );
     }
-    
+
     if (state.isSubmitting) {
       return const CircularProgressIndicator();
     }
-    
+
     if (state.phonemeResults.isNotEmpty) {
       return ElevatedButton.icon(
         icon: const Icon(Icons.arrow_forward),
@@ -501,7 +554,7 @@ class _ExamPronunciationScreenState extends State<ExamPronunciationScreen> {
         ),
       );
     }
-    
+
     return FloatingActionButton.large(
       backgroundColor: Colors.blue,
       elevation: 4,
