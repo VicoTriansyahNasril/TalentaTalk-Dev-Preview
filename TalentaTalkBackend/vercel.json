@@ -2,13 +2,7 @@
     "builds": [
         {
             "src": "app/main.py",
-            "use": "@vercel/python",
-            "config": {
-                "maxDuration": 10,
-                "includeFiles": [
-                    "requirements.txt"
-                ]
-            }
+            "use": "@vercel/python"
         }
     ],
     "routes": [

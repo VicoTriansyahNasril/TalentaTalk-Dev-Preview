@@ -20,8 +20,8 @@ pandas>=2.1.0
 llvmlite>=0.43.0
 numba>=0.60.0
 librosa>=0.10.2
-torch==2.2.2+cpu
-torchaudio==2.2.2+cpur
+torch==2.2.2
+torchaudio==2.2.2
 transformers
 openai-whisper
 google-generativeai
